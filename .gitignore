@@ -1,0 +1,43 @@
+# Dipendenze
+node_modules/
+.pnp
+.pnp.js
+
+# Build Next.js
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/next-env.d.ts
+
+# File intermedi (sempre rigenerabili)
+.tmp/
+
+# Ambiente e segreti
+.env
+.env.local
+.env*.local
+credentials.json
+token.json
+
+# Python (execution/)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sistema operativo / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Supabase CLI
+supabase/.branches/
+supabase/.temp/
+!.tmp/.gitkeep

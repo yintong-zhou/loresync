@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Token da brand-guidelines.md. Due soli typeface: Sora (heading 700),
+   Work Sans (body 400). */
+:root {
+  --font-heading: "Sora", system-ui, sans-serif;
+  --font-body: "Work Sans", system-ui, sans-serif;
+
+  --color-primary: #16181d;
+  --color-secondary: #f4f5f7;
+  --color-accent: #3457d5;
+  --color-neutral-dark: #3a3f4b;
+  --color-neutral-light: #e3e6eb;
+}
+
+body {
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
