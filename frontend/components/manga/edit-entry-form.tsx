@@ -8,6 +8,7 @@ import {
   LABEL_CLASS,
   TEXTAREA_CLASS,
 } from "@/components/ui/form-styles";
+import { Icon } from "@/components/ui/icon";
 import { IDLE_FORM_STATE, type FormState } from "@/lib/form-state";
 import type { Dictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n/config";
@@ -63,7 +64,8 @@ export const EditEntryForm = ({
       open={isOpen}
       onToggle={(event) => setIsOpen(event.currentTarget.open)}
     >
-      <summary className="inline-flex h-8 cursor-pointer items-center text-sm font-bold uppercase tracking-wide text-neutral-dark hover:text-primary">
+      <summary className="inline-flex h-8 cursor-pointer items-center gap-step-1 text-sm font-bold uppercase tracking-wide text-neutral-dark hover:text-primary">
+        <Icon name="edit" />
         {labels.edit}
       </summary>
 
@@ -105,39 +107,21 @@ export const EditEntryForm = ({
             {labels.descriptionLabel}
           </label>
 
-          {/* La descrizione salvata si legge, non si trova gia' nel campo:
-              cosi' si vede cosa c'e' senza che il form la riproponga. */}
-          {entry.description ? (
-            <p className="mt-step-1 max-w-prose text-sm text-neutral-dark">
-              {entry.description}
-            </p>
-          ) : null}
-
+          {/* La descrizione salvata si corregge dov'e' scritta. Un campo vuoto
+              sotto al testo in sola lettura obbligava a ricopiarla per
+              cambiarne una parola, e serviva pure una casella a parte per
+              cancellarla: qui svuotare il campo basta. */}
           <textarea
             id={`description-${entry.id}`}
             name="description"
             rows={3}
             maxLength={2000}
-            // Nessun `defaultValue`: parte vuota come ogni campo facoltativo.
+            defaultValue={entry.description ?? ""}
             className={`mt-step-1 text-sm ${TEXTAREA_CLASS}`}
           />
           <p className="mt-step-1 text-sm text-neutral-dark">
             {labels.descriptionEditHint}
           </p>
-
-          {entry.description ? (
-            // Senza questa casella la descrizione non si potrebbe piu'
-            // togliere: il campo vuoto significa "lasciala com'e'".
-            <label className="mt-step-1 flex items-center gap-step-1 text-sm">
-              <input
-                type="checkbox"
-                name="clearDescription"
-                value="1"
-                className="h-4 w-4 border-2 border-secondary"
-              />
-              {labels.descriptionClear}
-            </label>
-          ) : null}
         </div>
 
         <div>

@@ -7,6 +7,7 @@ import {
   CHIP_SM_CLASS,
   FIELD_SM_CLASS,
 } from "@/components/ui/form-styles";
+import { Icon } from "@/components/ui/icon";
 import {
   deleteEntry,
   updateDetails,
@@ -95,6 +96,8 @@ export const MangaCard = ({
               rel="noopener noreferrer"
               className={BUTTON_SM_CLASS}
             >
+              {/* La freccia in fuori dice che si esce dal sito. */}
+              <Icon name="external" />
               {link.kind === "chapter" ? labels.resumeChapter : labels.openSeries}
             </a>
           ) : (
@@ -165,7 +168,8 @@ export const MangaCard = ({
           <details className="shrink-0">
             {/* `h-8` come gli altri controlli: senza, il testo del summary
                 starebbe piu' in alto e romperebbe l'allineamento della riga. */}
-            <summary className="inline-flex h-8 cursor-pointer items-center text-sm font-bold uppercase tracking-wide text-neutral-dark hover:text-primary">
+            <summary className="inline-flex h-8 cursor-pointer items-center gap-step-1 text-sm font-bold uppercase tracking-wide text-neutral-dark hover:text-primary">
+              <Icon name="trash" />
               {labels.delete}
             </summary>
             <form action={deleteEntry} className="mt-step-1">

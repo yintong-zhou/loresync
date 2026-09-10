@@ -8,6 +8,9 @@ export const readingStatusSchema = z.enum([
   "droppato",
 ]);
 
+/** Tetto ai tag di una serie, condiviso da inserimento e modifica. */
+const MAX_TAGS = 20;
+
 /** Payload del form di inserimento / aggiornamento di una serie. */
 export const mangaEntryInputSchema = z.object({
   seriesUrl: z.string().url(),
@@ -34,22 +37,22 @@ export const parseTags = (raw: string): string[] => {
     if (tag) seen.add(tag);
   }
 
-  return [...seen].slice(0, 20);
+  return [...seen].slice(0, MAX_TAGS);
 };
 
 /**
  * Modifica di una serie gia' in libreria: solo i campi che si correggono a
  * mano. Titolo, capitolo e stato hanno gia' i loro controlli, e la copertina
  * arriva dal sito, non dall'utente.
+ *
+ * Ogni campo arriva con il valore salvato e viene riscritto per intero, quindi
+ * qui non serve distinguere "non toccato" da "svuotato": cio' che arriva e'
+ * cio' che l'utente ha davanti agli occhi. La descrizione vuota vuol dire
+ * cancellata, e per questo resta una stringa e non diventa `undefined`.
  */
 export const mangaEditSchema = z.object({
   seriesUrl: z.string().trim().url(),
-  description: z
-    .string()
-    .trim()
-    .max(2000)
-    .optional()
-    .or(z.literal("").transform(() => undefined)),
+  description: z.string().trim().max(2000),
   tags: z.string().transform(parseTags),
 });
 

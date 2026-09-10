@@ -18,8 +18,12 @@ const HEIGHT_SM = "h-8"; // 32px
 /** Bordo e interlinea condivisi: sono questi a garantire l'altezza uguale. */
 const BOX = "border-2 leading-none";
 
-/** Pulsanti ed etichette: sempre in maiuscolo, come da tono del brand. */
-const LABELLED = "inline-flex items-center justify-center font-bold uppercase tracking-wide";
+/**
+ * Pulsanti ed etichette: sempre in maiuscolo, come da tono del brand.
+ * Il `gap` stacca l'icona dal testo quando c'e'; sui pulsanti di solo testo
+ * non ha alcun effetto, perche' il contenuto e' uno solo.
+ */
+const LABELLED = "inline-flex items-center justify-center gap-step-1 font-bold uppercase tracking-wide";
 
 /**
  * Campo di testo a piena larghezza.
@@ -39,6 +43,16 @@ export const TEXTAREA_CLASS = `w-full ${BOX} border-secondary bg-neutral-light p
 export const BUTTON_CLASS = `${HEIGHT_MD} ${BOX} ${LABELLED} border-primary bg-primary px-step-3 text-neutral-light hover:border-secondary hover:bg-secondary disabled:opacity-60`;
 
 export const BUTTON_SM_CLASS = `${HEIGHT_SM} ${BOX} ${LABELLED} border-primary bg-primary px-step-2 text-sm text-neutral-light hover:border-secondary hover:bg-secondary disabled:opacity-60`;
+
+/**
+ * Pulsanti di sola icona: quadrati, senza l'imbottitura laterale che serve al
+ * testo. Non si ottengono sovrascrivendo il padding di `BUTTON_SM_CLASS`,
+ * perche' fra due classi Tailwind della stessa proprieta' vince quella scritta
+ * dopo nel foglio di stile, non quella scritta dopo nell'attributo.
+ */
+export const BUTTON_ICON_SM_CLASS = `${HEIGHT_SM} w-8 ${BOX} ${LABELLED} border-primary bg-primary text-neutral-light hover:border-secondary hover:bg-secondary`;
+
+export const BUTTON_ICON_GHOST_SM_CLASS = `${HEIGHT_SM} w-8 ${BOX} ${LABELLED} border-secondary hover:border-primary hover:text-primary`;
 
 /** Azione secondaria: stesso ingombro, nessun riempimento. */
 export const BUTTON_GHOST_CLASS = `${HEIGHT_MD} ${BOX} ${LABELLED} border-secondary px-step-2 hover:border-primary hover:text-primary`;

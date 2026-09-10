@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Icon } from "@/components/ui/icon";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import { signOut } from "@/lib/auth/actions";
 import { getDictionary } from "@/lib/i18n";
@@ -9,8 +10,10 @@ import {
   localizePath,
 } from "@/lib/i18n/config";
 
+// `inline-flex` e `gap`: l'icona sta in fila con l'etichetta e si stacca da
+// sola. L'allineamento verticale lo decide il contenitore, vedi sotto.
 const NAV_CLASS =
-  "text-sm font-bold uppercase tracking-wide hover:text-primary";
+  "inline-flex items-center gap-step-1 text-sm font-bold uppercase tracking-wide hover:text-primary";
 
 // Layout dell'area autenticata. La sessione e' verificata dal proxy, che
 // rimanda a /login prima che questo layout venga renderizzato.
@@ -39,14 +42,15 @@ export default async function AppLayout({
           Loresync
         </Link>
 
-        <nav className="flex flex-wrap items-baseline gap-step-3">
+        {/* `items-center` e non `items-baseline`: con un'icona dentro, la
+            linea di base allineerebbe il testo lasciando il glifo sfalsato. */}
+        <nav className="flex flex-wrap items-center gap-step-3">
           <Link href={localizePath(locale, "/library")} className={NAV_CLASS}>
+            <Icon name="books" />
             {dict.nav.library}
           </Link>
-          <Link href={localizePath(locale, "/manga/add")} className={NAV_CLASS}>
-            {dict.nav.add}
-          </Link>
           <Link href={localizePath(locale, "/account")} className={NAV_CLASS}>
+            <Icon name="user" />
             {dict.nav.account}
           </Link>
 
@@ -58,8 +62,9 @@ export default async function AppLayout({
             <input type="hidden" name="locale" value={locale} />
             <button
               type="submit"
-              className="border-b-2 border-secondary text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary"
+              className="inline-flex items-center gap-step-1 border-b-2 border-secondary text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary"
             >
+              <Icon name="exit" />
               {dict.account.signOut}
             </button>
           </form>

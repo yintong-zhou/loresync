@@ -8,6 +8,7 @@ import {
   negotiateLocale,
   splitLocale,
 } from "@/lib/i18n/config";
+import { VIEW_COOKIE, isViewMode } from "@/lib/view-mode";
 
 // Vedi la nota in server.ts: i callback dei cookie vanno annotati a mano.
 type CookiesToSet = Parameters<SetAllCookies>[0];
@@ -120,6 +121,19 @@ export const updateSession = async (request: NextRequest) => {
     maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",
   });
+
+  // Stessa idea per la vista della libreria: il selettore e' fatto di link, e
+  // chiedere `?view=grid` equivale a sceglierla. Il cookie va scritto qui
+  // perche' durante il render di una pagina non e' permesso, e passare per una
+  // server action avrebbe voluto dire un form al posto di due link.
+  const view = request.nextUrl.searchParams.get("view");
+  if (view && isViewMode(view)) {
+    supabaseResponse.cookies.set(VIEW_COOKIE, view, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: "lax",
+    });
+  }
 
   // Va restituita questa response: contiene i cookie di sessione aggiornati.
   return supabaseResponse;

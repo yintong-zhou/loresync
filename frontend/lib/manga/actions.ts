@@ -143,7 +143,7 @@ export const updateDetails = async (
 
   const parsed = mangaEditSchema.safeParse({
     seriesUrl: formData.get("seriesUrl"),
-    description: formData.get("description"),
+    description: formData.get("description") ?? "",
     tags: formData.get("tags") ?? "",
   });
 
@@ -160,23 +160,14 @@ export const updateDetails = async (
   } = await supabase.auth.getUser();
   if (!user) return formError(dict.account.errors.notSignedIn);
 
-  // Il campo descrizione parte sempre vuoto, quindi "vuoto" non puo'
-  // significare "cancella": vorrebbe dire perdere il testo salvato ogni volta
-  // che si corregge un tag. Vuoto vuol dire "lasciala com'e'"; per toglierla
-  // c'e' la casella apposita.
-  const clearDescription = formData.get("clearDescription") === "1";
-
-  const patch: {
-    series_url: string;
-    tags: string[];
-    description?: string | null;
-  } = {
+  // Ogni campo del pannello arriva con il valore salvato gia' dentro, quindi
+  // quello che torna e' la versione completa: si scrive cosi' com'e'. Un campo
+  // svuotato a mano e' una cancellazione voluta, non un campo non compilato.
+  const patch = {
     series_url: series.toString(),
     tags: parsed.data.tags,
+    description: parsed.data.description || null,
   };
-
-  if (parsed.data.description) patch.description = parsed.data.description;
-  else if (clearDescription) patch.description = null;
 
   const { error } = await supabase
     .from("manga_entries")
