@@ -1,10 +1,10 @@
-# Brand Guidelines — LORESYC
+# Brand Guidelines — LORESYNC
 
 > Generated with Brand Spec Sheet on 9/10/2026.
 
 ## The project
 
-- **Name**: LORESYC
+- **Name**: LORESYNC
 - **Description**: Piattaforma web per tenere traccia della lettura di manga, manhwa e manhua letti online. L'utente inserisce manualmente link e capitolo tramite un form; il sistema estrae automaticamente titolo (ed eventualmente descrizione) dal link.
 - **Target audience**: Age 18 - 40 for digital reader like manga
 - **Sector**: Other / General

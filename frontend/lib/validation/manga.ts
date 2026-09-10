@@ -21,6 +21,82 @@ export const mangaEntryInputSchema = z.object({
 
 export type MangaEntryInput = z.infer<typeof mangaEntryInputSchema>;
 
+/**
+ * I tag arrivano dal form come stringa unica separata da virgole.
+ * Normalizzati qui: minuscoli, senza spazi ai bordi, senza duplicati e senza
+ * vuoti, cosi' "Azione, azione ,  " non diventa tre tag diversi.
+ */
+export const parseTags = (raw: string): string[] => {
+  const seen = new Set<string>();
+
+  for (const piece of raw.split(",")) {
+    const tag = piece.trim().toLowerCase().slice(0, 50);
+    if (tag) seen.add(tag);
+  }
+
+  return [...seen].slice(0, 20);
+};
+
+/**
+ * Modifica di una serie gia' in libreria: solo i campi che si correggono a
+ * mano. Titolo, capitolo e stato hanno gia' i loro controlli, e la copertina
+ * arriva dal sito, non dall'utente.
+ */
+export const mangaEditSchema = z.object({
+  seriesUrl: z.string().trim().url(),
+  description: z
+    .string()
+    .trim()
+    .max(2000)
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  tags: z.string().transform(parseTags),
+});
+
+/**
+ * Schema del form: tutto arriva come stringa da `FormData`, quindi la
+ * conversione fa parte della validazione e non del componente.
+ */
+export const mangaFormSchema = z.object({
+  seriesUrl: z.string().trim().url(),
+  chapterUrl: z
+    .string()
+    .trim()
+    .url()
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  title: z.string().trim().min(1).max(300),
+  // Arriva da un campo nascosto riempito dall'estrazione: va validato come
+  // qualunque altro input, perche' il campo resta modificabile dal browser.
+  coverUrl: z
+    .string()
+    .trim()
+    .url()
+    .max(2000)
+    .refine((value) => /^https?:\/\//i.test(value), { message: "scheme" })
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  description: z
+    .string()
+    .trim()
+    .max(2000)
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  currentChapter: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => {
+      if (!value) return null;
+      // La virgola decimale e' normale scrivendo in italiano.
+      const parsed = Number.parseFloat(value.replace(",", "."));
+      return Number.isFinite(parsed) ? parsed : null;
+    })
+    .refine((value) => value === null || value >= 0, { message: "negative" }),
+  status: readingStatusSchema,
+  tags: z.string().transform(parseTags),
+});
+
 /** Payload di POST /api/metadata. */
 export const metadataRequestSchema = z.object({
   url: z.string().url(),

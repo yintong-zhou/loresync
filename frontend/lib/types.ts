@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/i18n/config";
+
 /**
  * Stati di lettura, nell'ordine in cui vanno mostrati.
  * I valori sono quelli dell'enum `reading_status` su Postgres e restano in
@@ -14,6 +16,20 @@ export const READING_STATUSES = [
 /** Stato di lettura di una serie. */
 export type ReadingStatus = (typeof READING_STATUSES)[number];
 
+/**
+ * Profilo dell'utente (tabella `profiles`).
+ * Le credenziali restano in `auth.users`, gestita da Supabase: qui ci sono
+ * solo i dati che l'app scrive.
+ */
+export interface Profile {
+  id: string;
+  /** Puo' essere null: la registrazione non lo richiede. */
+  displayName: string | null;
+  preferredLocale: Locale;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /** Una serie nella libreria di un utente. */
 export interface MangaEntry {
   id: string;
@@ -24,6 +40,11 @@ export interface MangaEntry {
   chapterUrl: string | null;
   title: string;
   description: string | null;
+  /**
+   * Link alla copertina sul sito di origine. L'immagine non e' nostra: la
+   * carica il browser, e puo' sparire se la piattaforma la rimuove.
+   */
+  coverUrl: string | null;
   /** Ultimo capitolo raggiunto (decimale: alcune serie usano 10.5). */
   currentChapter: number | null;
   status: ReadingStatus;
@@ -36,5 +57,6 @@ export interface MangaEntry {
 export interface ExtractedMetadata {
   title: string;
   description?: string;
+  coverUrl?: string;
   sourceHost: string;
 }

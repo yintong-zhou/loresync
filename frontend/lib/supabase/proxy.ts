@@ -60,6 +60,13 @@ export const updateSession = async (request: NextRequest) => {
     return supabaseResponse;
   }
 
+  // `/auth/callback` e' l'URL scritto nelle email e nella configurazione del
+  // progetto Supabase: non va prefissato con la lingua, o i link gia' spediti
+  // smetterebbero di funzionare.
+  if (pathname.startsWith("/auth")) {
+    return supabaseResponse;
+  }
+
   const { locale, rest } = splitLocale(pathname);
 
   // Nessun prefisso di lingua: si sceglie e si redirige una volta sola.

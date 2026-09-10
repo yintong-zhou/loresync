@@ -195,10 +195,9 @@ poche settimane.
 - **Non lanciare `next build` con `next dev` attivo.** Corrompe
   `.next/dev/types` e il typecheck fallisce con errori in file generati. Ferma
   il dev server, `rm -rf .next`, poi builda.
-- **Il nome del brand e' ancora ambiguo.** `brand-guidelines.md` dice
-  **LORESYC** (senza la N) in titolo e campo Name; `PROJECT.md`, README, cartella
-  e remote GitHub dicono `loresync`. In pagina e' usato LORESYNC. Da chiarire
-  con l'utente prima di toccare wordmark e metadata.
+- **Il nome del brand e' LORESYNC**, confermato dall'utente. Il refuso in
+  `brand-guidelines.md` (LORESYC, senza la N, in titolo e campo Name) e' stato
+  corretto: non e' piu' una questione aperta.
 - **`brand-guidelines.md` e' stato riscritto una volta a meta' lavoro**, cambiando
   mood, palette, font, raggio e regole di layout. Rileggerlo per intero prima di
   fidarsi di quello che si ricorda, non solo la sezione che serve.
