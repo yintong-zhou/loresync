@@ -1,39 +1,44 @@
 import type { Config } from "tailwindcss";
 
-// Valori derivati da brand-guidelines.md (LORESYNC, mood minimal).
-// I colori sono esposti anche come CSS custom properties in app/globals.css.
+// Valori da brand-guidelines.md (mood Bold).
 const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
   ],
   theme: {
+    // Raggio 0px: sovrascritto, non esteso, cosi' nessuna utility `rounded-*`
+    // puo' reintrodurre angoli arrotondati per distrazione.
+    borderRadius: {
+      none: "0",
+      DEFAULT: "0",
+      sm: "0",
+      md: "0",
+      lg: "0",
+      xl: "0",
+      "2xl": "0",
+      "3xl": "0",
+      full: "0",
+    },
     extend: {
       colors: {
-        primary: "#16181D",
-        secondary: "#F4F5F7",
-        accent: "#3457D5",
-        "neutral-dark": "#3A3F4B",
-        "neutral-light": "#E3E6EB",
+        primary: "#E10600",
+        secondary: "#050505",
+        accent: "#FFC400",
+        "neutral-dark": "#0A0A0A",
+        "neutral-light": "#F5F5F5",
       },
       fontFamily: {
-        heading: ["var(--font-heading)", "system-ui", "sans-serif"],
+        heading: ["var(--font-heading)", "Impact", "sans-serif"],
         sans: ["var(--font-body)", "system-ui", "sans-serif"],
       },
-      // Base 8px: la scala Tailwind di default e' in rem/4, questi alias
-      // rendono espliciti gli step previsti dalle guideline.
+      // Scala 8/16/32/64/128: salti ampi e deliberati, niente valori intermedi.
       spacing: {
         "step-1": "8px",
         "step-2": "16px",
-        "step-3": "24px",
-        "step-4": "32px",
-        "step-5": "48px",
-        "step-6": "64px",
-        "step-7": "96px",
-      },
-      borderRadius: {
-        DEFAULT: "4px",
-        lg: "8px",
+        "step-3": "32px",
+        "step-4": "64px",
+        "step-5": "128px",
       },
       maxWidth: {
         // 60-70 caratteri per riga sul body copy

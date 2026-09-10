@@ -1,13 +1,18 @@
-/** Stato di lettura di una serie. */
-export type ReadingStatus = "in_corso" | "completato" | "in_pausa" | "droppato";
+/**
+ * Stati di lettura, nell'ordine in cui vanno mostrati.
+ * I valori sono quelli dell'enum `reading_status` su Postgres e restano in
+ * italiano: sono identificativi di dati, non testo da leggere. Le etichette
+ * tradotte stanno in `lib/i18n/dictionaries/*` sotto `readingStatus`.
+ */
+export const READING_STATUSES = [
+  "in_corso",
+  "completato",
+  "in_pausa",
+  "droppato",
+] as const;
 
-/** Etichette leggibili per lo stato di lettura. */
-export const READING_STATUS_LABELS: Record<ReadingStatus, string> = {
-  in_corso: "In corso",
-  completato: "Completato",
-  in_pausa: "In pausa",
-  droppato: "Droppato",
-};
+/** Stato di lettura di una serie. */
+export type ReadingStatus = (typeof READING_STATUSES)[number];
 
 /** Una serie nella libreria di un utente. */
 export interface MangaEntry {

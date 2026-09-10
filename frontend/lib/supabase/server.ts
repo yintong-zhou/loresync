@@ -30,7 +30,7 @@ export const createClient = async () => {
           } catch {
             // Chiamato da un Server Component, dove i cookie sono in sola
             // lettura. Si puo' ignorare: il refresh della sessione lo fa il
-            // middleware.
+            // proxy (proxy.ts).
           }
         },
       },

@@ -1,60 +1,58 @@
-# Brand Guidelines — LORESYNC
+# Brand Guidelines — LORESYC
 
 > Generated with Brand Spec Sheet on 9/10/2026.
 
 ## The project
 
-- **Name**: LORESYNC
+- **Name**: LORESYC
 - **Description**: Piattaforma web per tenere traccia della lettura di manga, manhwa e manhua letti online. L'utente inserisce manualmente link e capitolo tramite un form; il sistema estrae automaticamente titolo (ed eventualmente descrizione) dal link.
-- **Target audience**: digital reader like manga, age 18 to 40
-- **Sector**: Fashion & Lifestyle
-- **Mood**: Minimal
+- **Target audience**: Age 18 - 40 for digital reader like manga
+- **Sector**: Other / General
+- **Mood**: Bold
 
 ## Colors
 
 | Role | Hex |
 |---|---|
-| Primary | `#16181D` |
-| Secondary | `#F4F5F7` |
-| Accent | `#3457D5` |
-| Dark neutral | `#3A3F4B` |
-| Light neutral | `#E3E6EB` |
+| Primary | `#E10600` |
+| Secondary | `#050505` |
+| Accent | `#FFC400` |
+| Dark neutral | `#0A0A0A` |
+| Light neutral | `#F5F5F5` |
 
 ## Typography
 
-- **Headings**: Sora, weight 700
-- **Body**: Work Sans, weight 400
+- **Headings**: Anton, weight 400
+- **Body**: Barlow, weight 400
 - Keep body copy around 60–70 characters per line for readability.
 
 ## Tone of voice
 
-`essential` · `clear` · `calm` · `precise` · `no-frills`
+`sharp` · `unconventional` · `confident` · `direct` · `decisive`
 
 ## Imagery & iconography
 
-Clean photography with plenty of negative space, a desaturated palette, simple geometric compositions. Avoid superfluous decoration or too many subjects in a single frame. Editorial photography with a strong visual identity and bold contrast.
+High-contrast imagery, typography used as a dominant graphic element, saturated color, asymmetric compositions that break the grid on purpose.
 
 ## Spacing & grid
 
 - **Base unit**: 8px
-- **Scale**: 8px, 16px, 24px, 32px, 48px, 64px, 96px
-- **Corner radius**: 4–8px
-- 12-column grid with generous margins: lots of white space between sections.
+- **Scale**: 8px, 16px, 32px, 64px, 128px
+- **Corner radius**: 0px
+- Large, deliberate spacing jumps, asymmetry, elements that bleed past the margins for visual tension.
 
 ## Logo — clear space
 
-The logo lives in isolation: minimum clear space equal to the height of the mark on every side. One color per application, no shadows or effects.
+The logo can be cropped or bleed off frame for graphic effect, but never rendered illegible. Minimal clear space, only where legibility requires it.
 
 ## Do's and Don'ts
 
 **Do:**
-- Let elements breathe
-- Use only one accent color at a time
-- Align everything to a consistent grid
-- Keep styling consistent from one campaign to the next
+- Break the grid on purpose
+- Commit to one loud statement per screen
+- Push extreme scale contrasts with confidence
 
 **Avoid:**
-- Mix more than two typefaces
-- Fill empty space for its own sake
-- Add decorative shadows or gradients
-- Change visual direction every collection with no throughline
+- Add superfluous decoration
+- Center everything by default
+- Combine more than two type weights
