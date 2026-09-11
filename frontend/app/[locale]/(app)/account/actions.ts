@@ -16,17 +16,13 @@ import {
   isLocale,
   localizePath,
 } from "@/lib/i18n/config";
+import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 import {
   newEmailSchema,
   newPasswordSchema,
   profileSchema,
 } from "@/lib/validation/profile";
-
-const readLocale = (formData: FormData) => {
-  const raw = String(formData.get("locale") ?? "");
-  return isLocale(raw) ? raw : DEFAULT_LOCALE;
-};
 
 /** URL assoluto per i link inviati via email. */
 const callbackUrl = () =>
@@ -36,7 +32,7 @@ export const updateProfile = async (
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> => {
-  const locale = readLocale(formData);
+  const locale = await getLocale();
   const dict = getDictionary(locale);
 
   const parsed = profileSchema.safeParse({
@@ -83,7 +79,7 @@ export const updateEmail = async (
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> => {
-  const locale = readLocale(formData);
+  const locale = await getLocale();
   const dict = getDictionary(locale);
 
   const parsed = newEmailSchema.safeParse({ email: formData.get("email") });
@@ -106,7 +102,7 @@ export const updatePassword = async (
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> => {
-  const locale = readLocale(formData);
+  const locale = await getLocale();
   const dict = getDictionary(locale);
 
   const parsed = newPasswordSchema.safeParse({

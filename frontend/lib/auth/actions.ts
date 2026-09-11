@@ -9,6 +9,7 @@ import {
   isLocale,
   localizePath,
 } from "@/lib/i18n/config";
+import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 import { credentialsSchema, signUpSchema } from "@/lib/validation/auth";
 import {
@@ -19,17 +20,11 @@ import {
 import { authErrorMessage, safeNextPath } from "./helpers";
 import { cookies } from "next/headers";
 
-/** La lingua arriva dal form: va validata come qualunque altro input. */
-const readLocale = (formData: FormData) => {
-  const raw = String(formData.get("locale") ?? "");
-  return isLocale(raw) ? raw : DEFAULT_LOCALE;
-};
-
 export const signIn = async (
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> => {
-  const locale = readLocale(formData);
+  const locale = await getLocale();
   const dict = getDictionary(locale);
 
   const parsed = credentialsSchema.safeParse({
@@ -59,7 +54,7 @@ export const signUp = async (
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> => {
-  const locale = readLocale(formData);
+  const locale = await getLocale();
   const dict = getDictionary(locale);
 
   const rawDisplayName = String(formData.get("displayName") ?? "").trim();
@@ -101,7 +96,7 @@ export const signUp = async (
 };
 
 export const signOut = async (formData: FormData): Promise<void> => {
-  const locale = readLocale(formData);
+  const locale = await getLocale();
 
   const supabase = await createClient();
   await supabase.auth.signOut();

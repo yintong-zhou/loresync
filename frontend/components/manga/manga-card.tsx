@@ -1,31 +1,24 @@
 import { Cover } from "@/components/manga/cover";
+import { DeleteEntry } from "@/components/manga/delete-entry";
 import { EditEntryForm } from "@/components/manga/edit-entry-form";
+import { ProgressForm } from "@/components/manga/progress-form";
 import {
-  BUTTON_DANGER_SM_CLASS,
-  BUTTON_GHOST_SM_CLASS,
   BUTTON_SM_CLASS,
   CHIP_SM_CLASS,
-  FIELD_SM_CLASS,
+  TAG_SM_CLASS,
 } from "@/components/ui/form-styles";
 import { Icon } from "@/components/ui/icon";
-import {
-  deleteEntry,
-  updateDetails,
-  updateProgress,
-} from "@/lib/manga/actions";
+import { updateDetails } from "@/lib/manga/actions";
 import type { Dictionary } from "@/lib/i18n";
-import type { Locale } from "@/lib/i18n/config";
 import { resolveReadingLink } from "@/lib/reading-link";
-import { READING_STATUSES, type MangaEntry } from "@/lib/types";
+import type { MangaEntry } from "@/lib/types";
 
 export const MangaCard = ({
   entry,
-  locale,
   labels,
   statusLabels,
 }: {
   entry: MangaEntry;
-  locale: Locale;
   labels: Dictionary["manga"];
   statusLabels: Dictionary["readingStatus"];
 }) => {
@@ -72,7 +65,7 @@ export const MangaCard = ({
             {entry.tags.map((tag) => (
               <li
                 key={tag}
-                className={CHIP_SM_CLASS}
+                className={TAG_SM_CLASS}
               >
                 {tag}
               </li>
@@ -106,49 +99,11 @@ export const MangaCard = ({
             </span>
           )}
 
-          <form
-            action={updateProgress}
-            className="flex flex-wrap items-center gap-step-1"
-          >
-            <input type="hidden" name="locale" value={locale} />
-            <input type="hidden" name="id" value={entry.id} />
-
-            {/* Etichette per chi usa uno screen reader, senza occupare
-                una riga a schermo. */}
-            <label className="sr-only" htmlFor={`chapter-${entry.id}`}>
-              {labels.chapterLabel}
-            </label>
-            <input
-              id={`chapter-${entry.id}`}
-              name="currentChapter"
-              type="text"
-              inputMode="decimal"
-              defaultValue={entry.currentChapter ?? ""}
-              aria-label={labels.chapterLabel}
-              className={`w-16 ${FIELD_SM_CLASS}`}
-            />
-
-            <label className="sr-only" htmlFor={`status-${entry.id}`}>
-              {labels.statusLabel}
-            </label>
-            <select
-              id={`status-${entry.id}`}
-              name="status"
-              defaultValue={entry.status}
-              className={FIELD_SM_CLASS}
-            >
-              {READING_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {statusLabels[status]}
-                </option>
-              ))}
-            </select>
-
-            <button type="submit" className={BUTTON_GHOST_SM_CLASS}>
-              {labels.save}
-            </button>
-          </form>
-
+          <ProgressForm
+            entry={entry}
+            labels={labels}
+            statusLabels={statusLabels}
+          />
         </div>
 
         {/* Correzioni occasionali: link, tag e descrizione stanno chiusi, e
@@ -158,31 +113,11 @@ export const MangaCard = ({
             <EditEntryForm
               action={updateDetails}
               entry={entry}
-              locale={locale}
               labels={labels}
             />
           </div>
 
-          {/* Conferma senza JavaScript: il primo click apre, il secondo
-              elimina. Una cancellazione non deve stare a un click solo. */}
-          <details className="shrink-0">
-            {/* `h-8` come gli altri controlli: senza, il testo del summary
-                starebbe piu' in alto e romperebbe l'allineamento della riga. */}
-            <summary className="inline-flex h-8 cursor-pointer items-center gap-step-1 text-sm font-bold uppercase tracking-wide text-neutral-dark hover:text-primary">
-              <Icon name="trash" />
-              {labels.delete}
-            </summary>
-            <form action={deleteEntry} className="mt-step-1">
-              <input type="hidden" name="locale" value={locale} />
-              <input type="hidden" name="id" value={entry.id} />
-              <button
-                type="submit"
-                className={BUTTON_DANGER_SM_CLASS}
-              >
-                {labels.deleteConfirm}
-              </button>
-            </form>
-          </details>
+          <DeleteEntry entry={entry} labels={labels} />
         </div>
       </div>
     </article>

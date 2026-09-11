@@ -5,7 +5,8 @@ import {
 } from "@/components/ui/form-styles";
 import { Icon, type IconName } from "@/components/ui/icon";
 import type { Dictionary } from "@/lib/i18n";
-import { localizePath, type Locale } from "@/lib/i18n/config";
+import type { Locale } from "@/lib/i18n/config";
+import { libraryHref, type LibraryParams } from "@/lib/manga/library-url";
 import { VIEW_MODES, type ViewMode } from "@/lib/view-mode";
 
 /**
@@ -18,24 +19,19 @@ import { VIEW_MODES, type ViewMode } from "@/lib/view-mode";
 export const ViewToggle = ({
   current,
   locale,
-  filters,
+  params,
   labels,
 }: {
   current: ViewMode;
   locale: Locale;
-  /** Filtri attivi, da riportare nel link: cambiare vista non li azzera. */
-  filters: { q?: string; status?: string; tag?: string };
+  /**
+   * Stato della pagina da riportare nel link: cambiare vista non azzera i
+   * filtri, non cambia l'ordinamento e non riporta alla prima pagina, perche'
+   * le due viste mostrano le stesse serie nella stessa quantita'.
+   */
+  params: LibraryParams;
   labels: Dictionary["library"];
 }) => {
-  const hrefFor = (view: ViewMode) => {
-    const params = new URLSearchParams();
-    if (filters.q) params.set("q", filters.q);
-    if (filters.status) params.set("status", filters.status);
-    if (filters.tag) params.set("tag", filters.tag);
-    params.set("view", view);
-    return `${localizePath(locale, "/library")}?${params.toString()}`;
-  };
-
   const text: Record<ViewMode, string> = {
     list: labels.viewList,
     grid: labels.viewGrid,
@@ -53,7 +49,7 @@ export const ViewToggle = ({
         return (
           <Link
             key={view}
-            href={hrefFor(view)}
+            href={libraryHref(locale, { ...params, view })}
             // Il colore da solo non basta a dire quale vista e' attiva: chi
             // usa uno screen reader lo sa da qui.
             aria-current={active ? "page" : undefined}

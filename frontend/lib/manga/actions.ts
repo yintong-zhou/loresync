@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { formError, formSuccess, type FormState } from "@/lib/form-state";
 import { getDictionary } from "@/lib/i18n";
-import { DEFAULT_LOCALE, isLocale, localizePath } from "@/lib/i18n/config";
+import { localizePath } from "@/lib/i18n/config";
+import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeUrl } from "@/lib/url";
 import {
@@ -13,11 +14,6 @@ import {
   readingStatusSchema,
 } from "@/lib/validation/manga";
 
-const readLocale = (formData: FormData) => {
-  const raw = String(formData.get("locale") ?? "");
-  return isLocale(raw) ? raw : DEFAULT_LOCALE;
-};
-
 /** Postgres: violazione di vincolo di unicita'. */
 const UNIQUE_VIOLATION = "23505";
 
@@ -25,7 +21,7 @@ export const createEntry = async (
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> => {
-  const locale = readLocale(formData);
+  const locale = await getLocale();
   const dict = getDictionary(locale);
 
   const parsed = mangaFormSchema.safeParse({
@@ -89,7 +85,7 @@ export const createEntry = async (
  * cosi' un capitolo scritto male non azzera anche lo stato.
  */
 export const updateProgress = async (formData: FormData): Promise<void> => {
-  const locale = readLocale(formData);
+  const locale = await getLocale();
   const id = String(formData.get("id") ?? "");
   if (!id) return;
 
@@ -124,7 +120,7 @@ export const updateProgress = async (formData: FormData): Promise<void> => {
 };
 
 /**
- * Modifica i campi che si correggono a mano: link della serie, tag e
+ * Modifica i campi che si correggono a mano: titolo, link della serie, tag e
  * descrizione.
  *
  * A differenza di `updateProgress` questa torna uno `FormState`: cambiare il
@@ -135,7 +131,7 @@ export const updateDetails = async (
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> => {
-  const locale = readLocale(formData);
+  const locale = await getLocale();
   const dict = getDictionary(locale);
   const id = String(formData.get("id") ?? "");
 
@@ -143,6 +139,7 @@ export const updateDetails = async (
 
   const parsed = mangaEditSchema.safeParse({
     seriesUrl: formData.get("seriesUrl"),
+    title: formData.get("title"),
     description: formData.get("description") ?? "",
     tags: formData.get("tags") ?? "",
   });
@@ -165,6 +162,7 @@ export const updateDetails = async (
   // svuotato a mano e' una cancellazione voluta, non un campo non compilato.
   const patch = {
     series_url: series.toString(),
+    title: parsed.data.title,
     tags: parsed.data.tags,
     description: parsed.data.description || null,
   };
@@ -187,7 +185,7 @@ export const updateDetails = async (
 };
 
 export const deleteEntry = async (formData: FormData): Promise<void> => {
-  const locale = readLocale(formData);
+  const locale = await getLocale();
   const id = String(formData.get("id") ?? "");
   if (!id) return;
 

@@ -2,7 +2,6 @@
 
 import { useActionState } from "react";
 import type { Dictionary } from "@/lib/i18n";
-import type { Locale } from "@/lib/i18n/config";
 import { IDLE_FORM_STATE, type FormState } from "@/lib/form-state";
 import { FormMessage } from "@/components/ui/form-message";
 import {
@@ -17,13 +16,11 @@ type Action = (state: FormState, formData: FormData) => Promise<FormState>;
 export const LoginForm = ({
   action,
   mode,
-  locale,
   next,
   labels,
 }: {
   action: Action;
   mode: "signin" | "signup";
-  locale: Locale;
   next: string | null;
   labels: Dictionary["auth"];
 }) => {
@@ -34,7 +31,6 @@ export const LoginForm = ({
     <form action={formAction} className="flex flex-col gap-step-2">
       {/* La lingua viaggia col form: la server action non ha accesso ai
           params di rotta. Viene comunque rivalidata lato server. */}
-      <input type="hidden" name="locale" value={locale} />
       {next ? <input type="hidden" name="next" value={next} /> : null}
 
       {isSignUp ? (

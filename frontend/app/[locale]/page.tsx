@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
+import { Logo } from "@/components/ui/logo";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale, localizePath } from "@/lib/i18n/config";
 import { READING_STATUSES } from "@/lib/types";
@@ -39,7 +40,13 @@ export default async function HomePage({
       {/* Clear space minimo: le guideline ammettono il wordmark a filo bordo. */}
       <header className="border-b-2 border-secondary">
         <div className="mx-auto flex max-w-6xl items-baseline justify-between gap-step-2 px-step-2 py-step-2 md:px-step-3">
-          <span className="font-heading text-2xl uppercase">Loresync</span>
+          {/* Il segno affianca il wordmark invece di sostituirlo: e' la prima
+              pagina che un ospite vede, e il nome scritto per esteso conta piu'
+              del simbolo. */}
+          <span className="flex items-center gap-step-1 font-heading text-2xl uppercase">
+            <Logo size={32} />
+            Loresync
+          </span>
           <div className="flex items-baseline gap-step-3">
             <LocaleSwitcher current={locale} labels={languageNames} />
             <Link

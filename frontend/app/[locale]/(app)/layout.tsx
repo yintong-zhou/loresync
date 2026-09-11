@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
+import { Logo } from "@/components/ui/logo";
 import { signOut } from "@/lib/auth/actions";
 import { getDictionary } from "@/lib/i18n";
 import {
@@ -35,10 +36,14 @@ export default async function AppLayout({
   return (
     <div className="mx-auto max-w-6xl px-step-2 py-step-3 md:px-step-3">
       <header className="mb-step-3 flex flex-wrap items-baseline justify-between gap-step-2 border-b-2 border-secondary pb-step-2">
+        {/* `items-center` sul link, non `items-baseline` come sul contenitore:
+            il segno non ha linea di base, e allineato a quella del testo
+            risulterebbe sfalsato verso l'alto. */}
         <Link
           href={localizePath(locale, "/library")}
-          className="font-heading text-2xl uppercase"
+          className="flex items-center gap-step-1 font-heading text-2xl uppercase"
         >
+          <Logo size={32} />
           Loresync
         </Link>
 
@@ -59,7 +64,6 @@ export default async function AppLayout({
           {/* Il logout cambia stato, quindi e' un form POST e non un link: un
               GET puo' essere seguito da un prefetch o da un antivirus. */}
           <form action={signOut}>
-            <input type="hidden" name="locale" value={locale} />
             <button
               type="submit"
               className="inline-flex items-center gap-step-1 border-b-2 border-secondary text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary"

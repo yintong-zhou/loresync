@@ -109,6 +109,38 @@ const ICONS = {
       <path d="M14 3L8 5v9l6-2z" />
     </>
   ),
+
+  /** Pagina precedente. */
+  prev: (
+    <>
+      <path d="M14 8H2" />
+      <path d="M6 4L2 8l4 4" />
+    </>
+  ),
+
+  /** Pagina successiva. */
+  next: (
+    <>
+      <path d="M2 8h12" />
+      <path d="M10 4l4 4-4 4" />
+    </>
+  ),
+
+  /** Contenuti visibili: un occhio squadrato, in tinta col resto del set. */
+  eye: (
+    <>
+      <path d="M1 8l3-3h8l3 3-3 3H4z" />
+      <path d="M6 8h4" />
+    </>
+  ),
+
+  /** Contenuti nascosti: lo stesso occhio, sbarrato. */
+  "eye-off": (
+    <>
+      <path d="M1 8l3-3h8l3 3-3 3H4z" />
+      <path d="M2 2l12 12" />
+    </>
+  ),
 } satisfies Record<string, ReactNode>;
 
 export type IconName = keyof typeof ICONS;

@@ -20,7 +20,6 @@ export default async function AddMangaPage({
         <div className="col-span-12 md:col-span-8">
           <MangaForm
             action={createEntry}
-            locale={locale}
             labels={dict.manga}
             statusLabels={dict.readingStatus}
           />

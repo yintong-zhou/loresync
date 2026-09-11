@@ -41,17 +41,23 @@ export const parseTags = (raw: string): string[] => {
 };
 
 /**
- * Modifica di una serie gia' in libreria: solo i campi che si correggono a
- * mano. Titolo, capitolo e stato hanno gia' i loro controlli, e la copertina
- * arriva dal sito, non dall'utente.
+ * Modifica di una serie gia' in libreria: i campi che si correggono a mano.
+ * Capitolo e stato hanno gia' i loro controlli in linea, e la copertina arriva
+ * dal sito, non dall'utente.
  *
  * Ogni campo arriva con il valore salvato e viene riscritto per intero, quindi
  * qui non serve distinguere "non toccato" da "svuotato": cio' che arriva e'
  * cio' che l'utente ha davanti agli occhi. La descrizione vuota vuol dire
  * cancellata, e per questo resta una stringa e non diventa `undefined`.
+ *
+ * Il titolo fa eccezione: e' obbligatorio come all'inserimento, quindi vuoto
+ * non vuol dire cancellato ma sbagliato, e il salvataggio si ferma. Stessi
+ * limiti del form di inserimento, altrimenti un titolo accettato li' potrebbe
+ * essere rifiutato correggendo una virgola.
  */
 export const mangaEditSchema = z.object({
   seriesUrl: z.string().trim().url(),
+  title: z.string().trim().min(1).max(300),
   description: z.string().trim().max(2000),
   tags: z.string().transform(parseTags),
 });

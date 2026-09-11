@@ -8,6 +8,7 @@ import {
   negotiateLocale,
   splitLocale,
 } from "@/lib/i18n/config";
+import { ADULT_COOKIE, isAdultMode } from "@/lib/adult";
 import { VIEW_COOKIE, isViewMode } from "@/lib/view-mode";
 
 // Vedi la nota in server.ts: i callback dei cookie vanno annotati a mano.
@@ -129,6 +130,17 @@ export const updateSession = async (request: NextRequest) => {
   const view = request.nextUrl.searchParams.get("view");
   if (view && isViewMode(view)) {
     supabaseResponse.cookies.set(VIEW_COOKIE, view, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: "lax",
+    });
+  }
+
+  // E per lo stesso motivo la scelta sui contenuti per adulti: e' un link
+  // anche quella, e chi la nasconde deve ritrovarla nascosta al rientro.
+  const adult = request.nextUrl.searchParams.get("adult");
+  if (adult && isAdultMode(adult)) {
+    supabaseResponse.cookies.set(ADULT_COOKIE, adult, {
       path: "/",
       maxAge: 60 * 60 * 24 * 365,
       sameSite: "lax",

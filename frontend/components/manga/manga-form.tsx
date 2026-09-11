@@ -8,11 +8,12 @@ import {
   HINT_CLASS,
   LABEL_CLASS,
   BUTTON_CLASS,
+  OPTION_CLASS,
+  SELECT_CLASS,
   TEXTAREA_CLASS,
 } from "@/components/ui/form-styles";
 import { IDLE_FORM_STATE, type FormState } from "@/lib/form-state";
 import type { Dictionary } from "@/lib/i18n";
-import type { Locale } from "@/lib/i18n/config";
 import { READING_STATUSES } from "@/lib/types";
 
 type Action = (state: FormState, formData: FormData) => Promise<FormState>;
@@ -26,12 +27,10 @@ type Fetched = {
 
 export const MangaForm = ({
   action,
-  locale,
   labels,
   statusLabels,
 }: {
   action: Action;
-  locale: Locale;
   labels: Dictionary["manga"];
   statusLabels: Dictionary["readingStatus"];
 }) => {
@@ -92,7 +91,6 @@ export const MangaForm = ({
 
   return (
     <form action={formAction} className="flex flex-col gap-step-2">
-      <input type="hidden" name="locale" value={locale} />
 
       <div>
         <label className={LABEL_CLASS} htmlFor="seriesUrl">
@@ -181,10 +179,10 @@ export const MangaForm = ({
             id="status"
             name="status"
             defaultValue="in_corso"
-            className={`mt-step-1 ${FIELD_CLASS}`}
+            className={`mt-step-1 ${SELECT_CLASS}`}
           >
             {READING_STATUSES.map((status) => (
-              <option key={status} value={status}>
+              <option className={OPTION_CLASS} key={status} value={status}>
                 {statusLabels[status]}
               </option>
             ))}

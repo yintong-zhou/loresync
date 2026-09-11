@@ -55,7 +55,6 @@ export default async function AccountPage({
         <div className="col-span-12 md:col-span-7 md:col-start-6">
           <AccountForm
             action={updateProfile}
-            locale={locale}
             submitLabel={t.save}
             pendingLabel={t.pending}
           >
@@ -107,7 +106,6 @@ export default async function AccountPage({
           </p>
           <AccountForm
             action={updateEmail}
-            locale={locale}
             submitLabel={t.save}
             pendingLabel={t.pending}
           >
@@ -136,7 +134,6 @@ export default async function AccountPage({
         <div className="col-span-12 md:col-span-7 md:col-start-6">
           <AccountForm
             action={updatePassword}
-            locale={locale}
             submitLabel={t.save}
             pendingLabel={t.pending}
           >

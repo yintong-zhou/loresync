@@ -11,13 +11,12 @@ import {
 import { Icon } from "@/components/ui/icon";
 import { IDLE_FORM_STATE, type FormState } from "@/lib/form-state";
 import type { Dictionary } from "@/lib/i18n";
-import type { Locale } from "@/lib/i18n/config";
 import type { MangaEntry } from "@/lib/types";
 
 type Action = (state: FormState, formData: FormData) => Promise<FormState>;
 
 /**
- * Modifica in linea di link, tag e descrizione.
+ * Modifica in linea di titolo, link, tag e descrizione.
  *
  * Sta chiusa dentro un `<details>`: sono correzioni occasionali, e tenerle
  * sempre aperte raddoppierebbe l'altezza di ogni riga della libreria per un
@@ -29,12 +28,10 @@ type Action = (state: FormState, formData: FormData) => Promise<FormState>;
 export const EditEntryForm = ({
   action,
   entry,
-  locale,
   labels,
 }: {
   action: Action;
   entry: MangaEntry;
-  locale: Locale;
   labels: Dictionary["manga"];
 }) => {
   const [state, formAction, isPending] = useActionState(action, IDLE_FORM_STATE);
@@ -70,8 +67,28 @@ export const EditEntryForm = ({
       </summary>
 
       <form action={formAction} className="mt-step-1 flex flex-col gap-step-1">
-        <input type="hidden" name="locale" value={locale} />
         <input type="hidden" name="id" value={entry.id} />
+
+        {/* Primo campo del pannello: e' il testo che si legge nella card, e
+            quando si apre Modifica quasi sempre e' per sistemare quello che
+            l'estrazione ha ricavato dal sito. */}
+        <div>
+          <label className={LABEL_CLASS} htmlFor={`title-${entry.id}`}>
+            {labels.titleLabel}
+          </label>
+          <input
+            id={`title-${entry.id}`}
+            name="title"
+            type="text"
+            // Obbligatorio come all'inserimento: una serie senza titolo nella
+            // libreria non si distinguerebbe piu' dalle altre. Vuoto il
+            // browser ferma l'invio, e se passa comunque lo ferma lo schema.
+            required
+            maxLength={300}
+            defaultValue={entry.title}
+            className={`mt-step-1 w-full ${FIELD_SM_CLASS}`}
+          />
+        </div>
 
         <div>
           <label className={LABEL_CLASS} htmlFor={`seriesUrl-${entry.id}`}>

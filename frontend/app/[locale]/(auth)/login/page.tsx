@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LoginForm } from "@/components/auth/login-form";
+import { Logo } from "@/components/ui/logo";
 import { signIn, signUp } from "@/lib/auth/actions";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale, localizePath } from "@/lib/i18n/config";
@@ -35,8 +36,12 @@ export default async function LoginPage({
         <div className="col-span-12 md:col-span-5">
           <Link
             href={localizePath(locale, "/")}
-            className="font-heading text-2xl uppercase"
+            // `inline-flex`: il link non e' figlio di un contenitore flex come
+            // nelle altre intestazioni, e a tutta larghezza l'area cliccabile
+            // arriverebbe fino al bordo della colonna.
+            className="inline-flex items-center gap-step-1 font-heading text-2xl uppercase"
           >
+            <Logo size={32} />
             Loresync
           </Link>
           <h1 className="mt-step-2 text-4xl uppercase md:text-6xl">
@@ -58,7 +63,6 @@ export default async function LoginPage({
           <LoginForm
             action={isSignUp ? signUp : signIn}
             mode={isSignUp ? "signup" : "signin"}
-            locale={locale}
             next={next ?? null}
             labels={dict.auth}
           />
