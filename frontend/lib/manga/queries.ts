@@ -3,8 +3,13 @@ import type { MangaEntry, ReadingStatus } from "@/lib/types";
 import { createClient } from "@/lib/supabase/server";
 import { DEFAULT_SORT, SORT_COLUMNS, type SortKey } from "@/lib/manga/sort";
 
-/** Riga come arriva da Postgres. */
-type Row = {
+/**
+ * Riga come arriva da Postgres.
+ * Esportata perche' ne ricava le proprie colonne anche `lib/manga/stats.ts`: un
+ * secondo tipo scritto a mano la' sarebbe un secondo posto da aggiornare quando
+ * la tabella cambia.
+ */
+export type Row = {
   id: string;
   user_id: string;
   series_url: string;

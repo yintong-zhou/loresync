@@ -9,6 +9,7 @@ import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeUrl } from "@/lib/url";
 import {
+  chapterForStatus,
   mangaEditSchema,
   mangaFormSchema,
   readingStatusSchema,
@@ -58,7 +59,11 @@ export const createEntry = async (
     title: parsed.data.title,
     cover_url: parsed.data.coverUrl ?? null,
     description: parsed.data.description ?? null,
-    current_chapter: parsed.data.currentChapter,
+    // Il capitolo dipende dallo stato: vedi `chapterForStatus`.
+    current_chapter: chapterForStatus(
+      parsed.data.status,
+      parsed.data.currentChapter,
+    ),
     status: parsed.data.status,
     tags: parsed.data.tags,
   });
@@ -100,7 +105,18 @@ export const updateProgress = async (formData: FormData): Promise<void> => {
   }
 
   const status = readingStatusSchema.safeParse(formData.get("status"));
-  if (status.success) patch.status = status.data;
+  if (status.success) {
+    patch.status = status.data;
+
+    // Lo stato ha l'ultima parola sul capitolo, anche contro quello che c'e'
+    // scritto nel campo accanto: mettendo "da leggere" si sta dicendo che la
+    // serie non e' cominciata, e il numero rimasto nella casella e' quello di
+    // prima, non una scelta. Qui la regola vale pure a campo vuoto o illeggibile,
+    // altrimenti proprio il caso piu' comune — si cambia solo la tendina —
+    // sarebbe quello che la salta.
+    const forced = chapterForStatus(status.data, null);
+    if (forced !== null) patch.current_chapter = forced;
+  }
 
   if (Object.keys(patch).length === 0) return;
 
@@ -110,11 +126,21 @@ export const updateProgress = async (formData: FormData): Promise<void> => {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  await supabase
+  const { error } = await supabase
     .from("manga_entries")
     .update(patch)
     .eq("id", id)
     .eq("user_id", user.id);
+
+  // L'esito va guardato. Scartandolo, un rifiuto del database — un valore che
+  // la colonna non ammette, un vincolo violato — passava inosservato: la
+  // pagina si ricaricava lo stesso e il valore di prima ricompariva nella
+  // tendina, con l'aria di un pulsante che non ha fatto niente. E' lo stesso
+  // motivo per cui `updateDetails` qui sotto torna uno stato invece di tacere.
+  //
+  // Si solleva, come fanno le letture in `queries.ts`: questa azione non ha un
+  // canale per raccontare un errore, e tacere e' l'unica alternativa peggiore.
+  if (error) throw new Error(error.message);
 
   revalidatePath(localizePath(locale, "/library"));
 };
@@ -195,11 +221,16 @@ export const deleteEntry = async (formData: FormData): Promise<void> => {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  await supabase
+  const { error } = await supabase
     .from("manga_entries")
     .delete()
     .eq("id", id)
     .eq("user_id", user.id);
+
+  // Come in `updateProgress`: una cancellazione rifiutata, scartandone
+  // l'esito, si comportava esattamente come una riuscita — pagina ricaricata e
+  // serie ancora li'.
+  if (error) throw new Error(error.message);
 
   revalidatePath(localizePath(locale, "/library"));
 };

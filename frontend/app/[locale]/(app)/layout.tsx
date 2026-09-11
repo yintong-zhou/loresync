@@ -40,7 +40,7 @@ export default async function AppLayout({
             il segno non ha linea di base, e allineato a quella del testo
             risulterebbe sfalsato verso l'alto. */}
         <Link
-          href={localizePath(locale, "/library")}
+          href={localizePath(locale, "/dashboard")}
           className="flex items-center gap-step-1 font-heading text-2xl uppercase"
         >
           <Logo size={32} />
@@ -50,6 +50,10 @@ export default async function AppLayout({
         {/* `items-center` e non `items-baseline`: con un'icona dentro, la
             linea di base allineerebbe il testo lasciando il glifo sfalsato. */}
         <nav className="flex flex-wrap items-center gap-step-3">
+          <Link href={localizePath(locale, "/dashboard")} className={NAV_CLASS}>
+            <Icon name="chart" />
+            {dict.nav.dashboard}
+          </Link>
           <Link href={localizePath(locale, "/library")} className={NAV_CLASS}>
             <Icon name="books" />
             {dict.nav.library}

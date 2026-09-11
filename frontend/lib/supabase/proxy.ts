@@ -110,10 +110,38 @@ export const updateSession = async (request: NextRequest) => {
 
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone();
-    url.pathname = localizePath(locale, "/library");
+    // Dopo il login si atterra in dashboard e non in libreria: e' la pagina
+    // che risponde alla domanda con cui si apre l'app — dov'ero arrivato —
+    // mentre la libreria serve a cercare, e cercare viene dopo.
+    url.pathname = localizePath(locale, "/dashboard");
     url.search = "";
     return NextResponse.redirect(url);
   }
+
+  // Da qui in giu' si registrano le preferenze lette dall'URL. Il presupposto
+  // e' che chiedere un indirizzo equivalga a sceglierlo — vero quando a
+  // chiederlo e' l'utente, falso quando a chiederlo e' il browser.
+  //
+  // Next preleva in anticipo i link che entrano nello schermo, e i selettori di
+  // questa applicazione sono link che puntano allo stato **opposto** a quello
+  // attuale: nascosti i contenuti per adulti, il pulsante punta a
+  // `?adult=show`, il prelievo passa di qui e la preferenza appena espressa
+  // viene riscritta al contrario. Nella libreria non si vedeva, perche' li'
+  // l'URL batte il cookie; si vedeva altrove, dove il cookie e' l'unica fonte.
+  //
+  // Un prelievo anticipato non e' una scelta: si riconosce dalle intestazioni
+  // che Next gli mette addosso, e non lascia scritto niente.
+  // Copre il prelievo avviato dal browser, che si annuncia. **Non** copre
+  // quello avviato da Next: le sue intestazioni (`RSC`, `Next-Router-Prefetch`)
+  // vengono tolte prima che il proxy giri — verificato, qui arrivano solo
+  // `purpose` e `sec-purpose`. Finche' i selettori restano link GET la scelta
+  // resta quindi sovrascrivibile: la difesa vera e' non cambiare una
+  // preferenza con un GET.
+  const isPrefetch =
+    request.headers.get("purpose") === "prefetch" ||
+    (request.headers.get("sec-purpose") ?? "").startsWith("prefetch");
+
+  if (isPrefetch) return supabaseResponse;
 
   // Visitare una pagina localizzata equivale a scegliere quella lingua: cosi'
   // il selettore non ha bisogno di scrivere cookie lato client.

@@ -15,7 +15,9 @@ import { localizePath, splitLocale, type Locale } from "@/lib/i18n/config";
  * in slash.
  */
 export const safeNextPath = (next: string | null, locale: Locale): string => {
-  const fallback = localizePath(locale, "/library");
+  // Senza un `next` valido si atterra in dashboard: e' la home dell'area
+  // autenticata, quella che dice dov'eri arrivato.
+  const fallback = localizePath(locale, "/dashboard");
 
   if (!next) return fallback;
   if (!next.startsWith("/")) return fallback;

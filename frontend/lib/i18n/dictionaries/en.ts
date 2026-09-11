@@ -68,15 +68,26 @@ export const en: Dictionary = {
     footer: "Loresync — a personal tool for people who read too much",
   },
   readingStatus: {
+    da_leggere: "To read",
     in_corso: "Reading",
     completato: "Completed",
     in_pausa: "On hold",
     droppato: "Dropped",
   },
   nav: {
+    dashboard: "Dashboard",
     library: "Library",
     add: "Add",
     account: "Account",
+  },
+  dashboard: {
+    title: "Where you left off",
+    empty: "Nothing here yet. Start from the link of a series.",
+    statsSection: "Numbers",
+    chaptersRead: "Chapters reached",
+    series: "Series",
+    recent: "Active · {days}d",
+    statusSection: "By status",
   },
   auth: {
     loginTitle: "Log in to Loresync",

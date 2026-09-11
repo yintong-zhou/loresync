@@ -35,6 +35,20 @@ export const ProgressForm = ({
 
   return (
     <form
+      // Rimonta il form quando capitolo o stato cambiano sul server.
+      //
+      // I due campi sono non controllati, e `defaultValue` decide il valore
+      // solo al montaggio: cambiandolo dopo, React non tocca il nodo gia' in
+      // pagina. Al termine dell'azione il form viene reimpostato — e finiva
+      // sul valore di partenza del nodo, cioe' quello di prima del
+      // salvataggio. Si vedeva la riga sopra la card aggiornarsi e la tendina
+      // no, come se il cambio non fosse passato.
+      //
+      // Con la chiave legata ai dati il nodo e' un altro, `defaultValue` viene
+      // riletto, e i campi ripartono da cio' che e' stato salvato davvero.
+      // Vale anche per il capitolo, che a "da leggere" il server porta a zero
+      // senza che nessuno l'abbia scritto nella casella.
+      key={`${entry.status}:${entry.currentChapter ?? ""}`}
       action={updateProgress}
       className={
         stacked

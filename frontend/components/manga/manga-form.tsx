@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form-styles";
 import { IDLE_FORM_STATE, type FormState } from "@/lib/form-state";
 import type { Dictionary } from "@/lib/i18n";
-import { READING_STATUSES } from "@/lib/types";
+import { READING_STATUSES, type ReadingStatus } from "@/lib/types";
 
 type Action = (state: FormState, formData: FormData) => Promise<FormState>;
 
@@ -46,8 +46,15 @@ export const MangaForm = ({
   // si nasconde l'anteprima invece di lasciare l'icona di immagine rotta.
   const [coverBroken, setCoverBroken] = useState(false);
   const [chapterHint, setChapterHint] = useState<number | null>(null);
+  // Capitolo e stato sono controllati perche' il primo dipende dal secondo:
+  // vedi `chapterForStatus`, che applica la stessa regola sul server.
+  const [currentChapter, setCurrentChapter] = useState("");
+  const [status, setStatus] = useState<ReadingStatus>("in_corso");
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [isLooking, startLookup] = useTransition();
+
+  /** Serie messa da parte e non ancora aperta: il capitolo non ha scelte. */
+  const notStarted = status === "da_leggere";
 
   /**
    * Chiede il titolo all'API quando il link e' completo.
@@ -155,16 +162,30 @@ export const MangaForm = ({
           <label className={LABEL_CLASS} htmlFor="currentChapter">
             {labels.chapterLabel}
           </label>
+          {/* A "da leggere" il capitolo e' zero e non si scrive: lo stato dice
+              che la serie non e' cominciata, e un numero accanto lo
+              smentirebbe. Non e' una compilazione automatica come quelle che
+              qui si evitano — non si indovina niente, si scrive la conseguenza
+              di una scelta appena fatta dall'utente, ed e' reversibile
+              cambiando di nuovo la tendina.
+
+              `readOnly` e non `disabled`: un campo disabilitato non viene
+              inviato, e il valore arriverebbe vuoto al posto di zero. */}
           <input
             id="currentChapter"
             name="currentChapter"
             type="text"
             inputMode="decimal"
-            className={`mt-step-1 ${FIELD_CLASS}`}
+            value={notStarted ? "0" : currentChapter}
+            onChange={(event) => setCurrentChapter(event.target.value)}
+            readOnly={notStarted}
+            className={`mt-step-1 ${FIELD_CLASS} ${notStarted ? "text-neutral-dark" : ""}`}
           />
           {/* Suggerimento, non compilazione automatica: chi incolla il link
-              del capitolo 40 puo' essere arrivato al 38. */}
-          {chapterHint !== null ? (
+              del capitolo 40 puo' essere arrivato al 38. Tace quando il campo
+              e' bloccato: proporre un capitolo a cui non si puo' arrivare
+              sarebbe un invito a niente. */}
+          {chapterHint !== null && !notStarted ? (
             <p className={HINT_CLASS}>
               {labels.chapterHint} {chapterHint}
             </p>
@@ -178,7 +199,8 @@ export const MangaForm = ({
           <select
             id="status"
             name="status"
-            defaultValue="in_corso"
+            value={status}
+            onChange={(event) => setStatus(event.target.value as ReadingStatus)}
             className={`mt-step-1 ${SELECT_CLASS}`}
           >
             {READING_STATUSES.map((status) => (

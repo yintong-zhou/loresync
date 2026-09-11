@@ -2,6 +2,7 @@ import { z } from "zod";
 
 /** Stati di lettura ammessi (allineati all'enum su Supabase). */
 export const readingStatusSchema = z.enum([
+  "da_leggere",
   "in_corso",
   "completato",
   "in_pausa",
@@ -23,6 +24,26 @@ export const mangaEntryInputSchema = z.object({
 });
 
 export type MangaEntryInput = z.infer<typeof mangaEntryInputSchema>;
+
+/**
+ * Il capitolo che compete a uno stato.
+ *
+ * "Da leggere" vuol dire che la serie non e' cominciata, quindi il capitolo e'
+ * zero e non quello che c'era scritto prima: lasciare il numero vecchio
+ * accanto a quello stato darebbe due informazioni che si contraddicono, e chi
+ * riapre la libreria non saprebbe a quale credere. Zero e non `null` perche'
+ * zero e' un dato — sei all'inizio — mentre `null` vuol dire "non lo so", che
+ * e' un'altra cosa.
+ *
+ * Sta qui, e non dentro un form, perche' vale per ogni strada che scrive lo
+ * stato: il form di inserimento e il selettore in linea della libreria. Messa
+ * in uno solo dei due, l'altro avrebbe continuato a salvare la coppia
+ * incoerente.
+ */
+export const chapterForStatus = (
+  status: z.infer<typeof readingStatusSchema>,
+  chapter: number | null,
+): number | null => (status === "da_leggere" ? 0 : chapter);
 
 /**
  * I tag arrivano dal form come stringa unica separata da virgole.

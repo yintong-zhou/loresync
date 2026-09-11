@@ -84,15 +84,15 @@ export const signUp = async (
   if (error) return formError(authErrorMessage(error, dict));
 
   // Il progetto Supabase ha "Confirm email" disattivato: `signUp` apre subito
-  // la sessione e si entra diritti nella libreria.
+  // la sessione e si entra diritti nell'area autenticata.
   //
   // Il ramo qui sotto resta come rete: se un domani la conferma venisse
-  // riattivata dalla dashboard, senza di esso l'utente verrebbe mandato in
-  // libreria senza sessione e rimbalzato al login senza capire perche'.
+  // riattivata dalla dashboard di Supabase, senza di esso l'utente verrebbe
+  // mandato dentro senza sessione e rimbalzato al login senza capire perche'.
   if (!data.session) return formSuccess(dict.auth.checkEmail);
 
   revalidatePath("/", "layout");
-  redirect(localizePath(locale, "/library"));
+  redirect(localizePath(locale, "/dashboard"));
 };
 
 export const signOut = async (formData: FormData): Promise<void> => {

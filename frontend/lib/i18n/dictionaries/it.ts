@@ -71,15 +71,29 @@ export const it = {
   // Etichette degli stati di lettura. Le chiavi sono i valori dell'enum
   // `reading_status` su Postgres: i dati restano invariati, cambia l'etichetta.
   readingStatus: {
+    da_leggere: "Da leggere",
     in_corso: "In corso",
     completato: "Completato",
     in_pausa: "In pausa",
     droppato: "Droppato",
   },
   nav: {
+    dashboard: "Dashboard",
     library: "Libreria",
     add: "Aggiungi",
     account: "Account",
+  },
+  dashboard: {
+    title: "A che punto sei",
+    empty: "Non hai ancora aggiunto niente. Comincia dal link di una serie.",
+    statsSection: "Numeri",
+    // "Raggiunti" e non "letti": e' la somma dell'ultimo capitolo segnato in
+    // ogni serie, e i dati non dicono niente su cosa sia stato aperto davvero.
+    chaptersRead: "Capitoli raggiunti",
+    series: "Serie",
+    // `{days}` viene sostituito con il numero di giorni della finestra.
+    recent: "Attive · {days} gg",
+    statusSection: "Per stato",
   },
   auth: {
     loginTitle: "Accedi a Loresync",

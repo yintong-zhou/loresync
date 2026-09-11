@@ -1,12 +1,14 @@
 import type { Locale } from "@/lib/i18n/config";
 
 /**
- * Stati di lettura, nell'ordine in cui vanno mostrati.
+ * Stati di lettura, nell'ordine in cui vanno mostrati — che e' quello del ciclo
+ * di vita di una serie: messa da parte, cominciata, e poi come e' finita.
  * I valori sono quelli dell'enum `reading_status` su Postgres e restano in
  * italiano: sono identificativi di dati, non testo da leggere. Le etichette
  * tradotte stanno in `lib/i18n/dictionaries/*` sotto `readingStatus`.
  */
 export const READING_STATUSES = [
+  "da_leggere",
   "in_corso",
   "completato",
   "in_pausa",

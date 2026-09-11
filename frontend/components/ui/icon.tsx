@@ -102,6 +102,20 @@ const ICONS = {
     </>
   ),
 
+  /**
+   * Dashboard: tre colonne di altezza diversa.
+   * Un quadrante da cruscotto sarebbe il glifo piu' ovvio, ma e' tondo con la
+   * lancetta inclinata, e in un set fatto di spigoli vivi si vedrebbe che
+   * viene da un'altra parte.
+   */
+  chart: (
+    <>
+      <path d="M3 14V9" />
+      <path d="M8 14V3" />
+      <path d="M13 14V6" />
+    </>
+  ),
+
   /** Libreria: due pagine aperte. */
   books: (
     <>

@@ -149,12 +149,15 @@ export default async function HomePage({
               {t.statuses.title}
             </h2>
             <ul className="mt-step-3 flex flex-wrap gap-step-2">
-              {READING_STATUSES.map((status, i) => (
+              {READING_STATUSES.map((status) => (
                 <li
                   key={status}
-                  // Un solo blocco in giallo: l'accento resta un accento.
+                  // Un solo blocco in giallo: l'accento resta un accento. E'
+                  // legato allo stato, non alla posizione: l'elenco segue il
+                  // ciclo di vita e comincia da "da leggere", ma cio' che
+                  // l'applicazione fa davvero e' seguire cosa stai leggendo.
                   className={`border-2 border-secondary px-step-2 py-step-1 font-bold uppercase tracking-wide ${
-                    i === 0 ? "bg-accent" : ""
+                    status === "in_corso" ? "bg-accent" : ""
                   }`}
                 >
                   {dict.readingStatus[status]}
