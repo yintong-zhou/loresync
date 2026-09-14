@@ -46,8 +46,13 @@ export const authErrorMessage = (
 
   switch (error.code) {
     case "invalid_credentials":
-    case "email_not_confirmed":
       return errors.invalidCredentials;
+    // Staccato da `invalid_credentials`: collassarli non faceva trapelare
+    // quali indirizzi sono registrati, ma chiudeva in un vicolo cieco chi non
+    // ha confermato: non puo' entrare, e riprovare a registrarsi risponde che
+    // l'indirizzo e' gia' preso. Nessuno dei due messaggi nominava la posta.
+    case "email_not_confirmed":
+      return errors.emailNotConfirmed;
     case "user_already_exists":
     case "email_exists":
       return errors.emailTaken;

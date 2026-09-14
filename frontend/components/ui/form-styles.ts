@@ -68,6 +68,9 @@ export const BUTTON_SM_CLASS = `${HEIGHT_SM} ${BOX} ${LABELLED} border-primary b
  */
 export const BUTTON_ICON_SM_CLASS = `${HEIGHT_SM} w-8 ${BOX} ${LABELLED} border-primary bg-primary text-neutral-light hover:border-secondary hover:bg-secondary`;
 
+/** Icona sola, altezza dei campi: sta in fila con un `FIELD_CLASS`. */
+export const BUTTON_ICON_GHOST_CLASS = `${HEIGHT_MD} w-10 ${BOX} ${LABELLED} border-secondary hover:border-primary hover:text-primary`;
+
 export const BUTTON_ICON_GHOST_SM_CLASS = `${HEIGHT_SM} w-8 ${BOX} ${LABELLED} border-secondary hover:border-primary hover:text-primary`;
 
 /** Azione secondaria: stesso ingombro, nessun riempimento. */
@@ -76,6 +79,8 @@ export const BUTTON_GHOST_CLASS = `${HEIGHT_MD} ${BOX} ${LABELLED} border-second
 export const BUTTON_GHOST_SM_CLASS = `${HEIGHT_SM} ${BOX} ${LABELLED} border-secondary px-step-2 text-sm hover:border-primary hover:text-primary`;
 
 /** Azione distruttiva: si riempie di rosso solo al passaggio del mouse. */
+export const BUTTON_DANGER_CLASS = `${HEIGHT_MD} ${BOX} ${LABELLED} border-primary px-step-3 text-primary hover:bg-primary hover:text-neutral-light disabled:opacity-60`;
+
 export const BUTTON_DANGER_SM_CLASS = `${HEIGHT_SM} ${BOX} ${LABELLED} border-primary px-step-2 text-sm text-primary hover:bg-primary hover:text-neutral-light`;
 
 /** Elemento non interattivo che deve stare in fila con i controlli. */

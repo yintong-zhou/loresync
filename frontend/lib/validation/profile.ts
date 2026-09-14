@@ -25,3 +25,16 @@ export const newPasswordSchema = z
   });
 
 export type ProfileInput = z.infer<typeof profileSchema>;
+
+/**
+ * Conferma della chiusura account.
+ *
+ * Volutamente `min(1)` e non `passwordSchema`: qui la password non si sta
+ * scegliendo, si sta dimostrando di conoscerla. Applicare il minimo di otto
+ * caratteri farebbe rispondere "dati non validi" a chi ne digita una corta e
+ * sbagliata, dicendogli qualcosa sulla password vera; il verdetto lo da'
+ * Supabase, e per l'utente e' sempre lo stesso.
+ */
+export const deleteAccountSchema = z.object({
+  password: z.string().min(1),
+});

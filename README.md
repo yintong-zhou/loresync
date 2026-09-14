@@ -59,6 +59,31 @@ The database schema is applied with the Supabase CLI:
 supabase db push
 ```
 
+### Confirmation emails
+
+Supabase composes the confirmation emails (sign-up, email change, password
+recovery) and generates their tokens; delivery goes through Resend's SMTP
+server instead of Supabase's built-in sender, which is capped at a couple of
+messages per hour. Nothing about this lives in the app: no dependency, no env
+var read at runtime. It is configured in the Supabase dashboard, under
+Authentication.
+
+- **Email → Confirm email**: on. With it off no confirmation email is ever
+  generated, and there is nothing for Resend to deliver.
+- **Email → SMTP Settings**: host `smtp.resend.com`, port `465`, username
+  `resend`, password = a Resend API key. The sender address must belong to a
+  domain verified in Resend.
+- **Email templates**: point every link at
+  `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type={{ .Type }}`.
+  The default templates use a browser-only flow that leaves no server-side
+  cookie, so the link would land on a page with no session.
+- **URL Configuration → Site URL**: must match `NEXT_PUBLIC_SITE_URL`, since
+  `{{ .SiteURL }}` is what the templates above expand.
+- **Rate Limits → Emails**: the built-in limit stays in force until a custom
+  SMTP server is set; raise it once Resend is in place. The login page offers a
+  resend for the sign-up confirmation, so this limit is reachable by visitors,
+  not only by the app itself.
+
 ## Languages
 
 Italian and English, with no i18n libraries: two languages and a `proxy.ts` that

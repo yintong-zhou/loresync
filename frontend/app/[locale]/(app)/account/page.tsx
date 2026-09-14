@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { AccountForm } from "@/components/account/account-form";
+import { DeleteAccount } from "@/components/account/delete-account";
+import { PasswordField } from "@/components/ui/password-field";
 import {
   FIELD_CLASS,
   HINT_CLASS,
@@ -13,7 +15,12 @@ import {
   localizePath,
 } from "@/lib/i18n/config";
 import { createClient } from "@/lib/supabase/server";
-import { updateEmail, updatePassword, updateProfile } from "./actions";
+import {
+  deleteAccount,
+  updateEmail,
+  updatePassword,
+  updateProfile,
+} from "./actions";
 
 const SECTION_CLASS =
   "grid grid-cols-12 gap-step-3 border-t-2 border-secondary py-step-3";
@@ -137,38 +144,33 @@ export default async function AccountPage({
             submitLabel={t.save}
             pendingLabel={t.pending}
           >
-            <div>
-              <label className={LABEL_CLASS} htmlFor="password">
-                {t.newPasswordLabel}
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                minLength={8}
-                maxLength={72}
-                autoComplete="new-password"
-                className={`mt-step-1 ${FIELD_CLASS}`}
-              />
-              <p className={HINT_CLASS}>{dict.auth.passwordHint}</p>
-            </div>
-            <div>
-              <label className={LABEL_CLASS} htmlFor="confirmPassword">
-                {t.confirmPasswordLabel}
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                minLength={8}
-                maxLength={72}
-                autoComplete="new-password"
-                className={`mt-step-1 ${FIELD_CLASS}`}
-              />
-            </div>
+            <PasswordField
+              id="password"
+              name="password"
+              label={t.newPasswordLabel}
+              hint={dict.auth.passwordHint}
+              autoComplete="new-password"
+              showLabel={dict.common.passwordShow}
+              hideLabel={dict.common.passwordHide}
+            />
+            <PasswordField
+              id="confirmPassword"
+              name="confirmPassword"
+              label={t.confirmPasswordLabel}
+              autoComplete="new-password"
+              showLabel={dict.common.passwordShow}
+              hideLabel={dict.common.passwordHide}
+            />
           </AccountForm>
+        </div>
+      </section>
+
+      <section className={SECTION_CLASS}>
+        <h2 className="col-span-12 text-2xl uppercase md:col-span-4 md:text-3xl">
+          {t.deleteSection}
+        </h2>
+        <div className="col-span-12 md:col-span-7 md:col-start-6">
+          <DeleteAccount action={deleteAccount} labels={t} />
         </div>
       </section>
     </main>

@@ -14,6 +14,8 @@ export const en: Dictionary = {
     login: "Log in",
     languageLabel: "Language",
     languageName: "English",
+    passwordShow: "Show password",
+    passwordHide: "Hide password",
   },
   landing: {
     hero: {
@@ -104,8 +106,18 @@ export const en: Dictionary = {
     pending: "Wait...",
     checkEmail:
       "We sent you a confirmation email. Open it to activate your account.",
+    confirmPasswordLabel: "Confirm password",
+    passwordMismatch: "The two passwords do not match.",
+    resendTitle: "Didn't get the confirmation email?",
+    resendCta: "Send it again",
+    resendDone:
+      "If that address has an account waiting for confirmation, we sent a " +
+      "new email.",
     errors: {
       invalidCredentials: "Invalid email or password.",
+      emailNotConfirmed:
+        "You need to confirm your email before logging in. If it never " +
+        "arrived, you can have it sent again below.",
       invalidInput: "Check the details you entered.",
       emailTaken: "An account with this email already exists.",
       weakPassword: "The password must be at least 8 characters.",
@@ -137,10 +149,18 @@ export const en: Dictionary = {
     saved: "Saved.",
     pending: "Saving...",
     signOut: "Log out",
+    deleteSection: "Delete account",
+    deleteWarning:
+      "Deletes your account, your whole library and everything you put in " +
+      "it. There is no way back and no copy to recover from.",
+    deleteCta: "Delete my account",
+    deletePasswordLabel: "Confirm with your password",
+    deleteConfirm: "Delete permanently",
     errors: {
       invalidInput: "Check the details you entered.",
       notSignedIn: "Session expired. Log in again.",
       weakPassword: "The password must be at least 8 characters.",
+      wrongPassword: "Wrong password. Your account was left untouched.",
       generic: "Could not save. Try again.",
     },
   },

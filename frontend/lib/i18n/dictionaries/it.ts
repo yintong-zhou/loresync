@@ -15,6 +15,10 @@ export const it = {
     // Nome della lingua nella lingua stessa: si legge uguale da qualunque
     // pagina, senza dover tradurre l'elenco delle lingue in ogni lingua.
     languageName: "Italiano",
+    // Nominano l'azione del pulsante, non lo stato del campo: e' la regola
+    // che segue gia' il toggle dei contenuti per adulti.
+    passwordShow: "Mostra la password",
+    passwordHide: "Nascondi la password",
   },
   landing: {
     hero: {
@@ -110,10 +114,20 @@ export const it = {
     pending: "Attendi...",
     checkEmail:
       "Ti abbiamo mandato una mail di conferma. Aprila per attivare l'account.",
+    confirmPasswordLabel: "Conferma password",
+    passwordMismatch: "Le due password non coincidono.",
+    resendTitle: "Non hai ricevuto l'email di conferma?",
+    resendCta: "Rimandala",
+    resendDone:
+      "Se quell'indirizzo ha un account da confermare, ti abbiamo mandato " +
+      "una nuova email.",
     errors: {
       // Volutamente identico per email inesistente e password sbagliata: un
       // messaggio diverso direbbe a chiunque quali indirizzi sono registrati.
       invalidCredentials: "Email o password non validi.",
+      emailNotConfirmed:
+        "Devi confermare l'email prima di accedere. Se non ti è arrivata, " +
+        "puoi fartela rimandare qui sotto.",
       invalidInput: "Controlla i dati inseriti.",
       emailTaken: "Esiste già un account con questa email.",
       weakPassword: "La password deve avere almeno 8 caratteri.",
@@ -145,10 +159,19 @@ export const it = {
     saved: "Salvato.",
     pending: "Salvataggio...",
     signOut: "Esci",
+    deleteSection: "Elimina account",
+    deleteWarning:
+      "Cancella l'account, l'intera libreria e tutto quello che ci hai " +
+      "messo dentro. Non si torna indietro e non c'è una copia da cui " +
+      "ripescare.",
+    deleteCta: "Elimina il mio account",
+    deletePasswordLabel: "Conferma con la tua password",
+    deleteConfirm: "Elimina definitivamente",
     errors: {
       invalidInput: "Controlla i dati inseriti.",
       notSignedIn: "Sessione scaduta. Accedi di nuovo.",
       weakPassword: "La password deve avere almeno 8 caratteri.",
+      wrongPassword: "Password errata. L'account non è stato toccato.",
       generic: "Non è stato possibile salvare. Riprova.",
     },
   },

@@ -11,7 +11,11 @@ import {
 } from "@/lib/i18n/config";
 import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
-import { credentialsSchema, signUpSchema } from "@/lib/validation/auth";
+import {
+  credentialsSchema,
+  emailSchema,
+  signUpSchema,
+} from "@/lib/validation/auth";
 import {
   formError,
   formSuccess,
@@ -62,11 +66,21 @@ export const signUp = async (
   const parsed = signUpSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
     displayName: rawDisplayName === "" ? undefined : rawDisplayName,
     preferredLocale: locale,
   });
 
-  if (!parsed.success) return formError(dict.auth.errors.invalidInput);
+  if (!parsed.success) {
+    // Come in `updatePassword`: due password diverse non sono "dati non
+    // validi", che lascerebbe cercare quale dei quattro campi e' sbagliato.
+    const mismatch = parsed.error.issues.some(
+      (issue) => issue.message === "mismatch",
+    );
+    return formError(
+      mismatch ? dict.auth.passwordMismatch : dict.auth.errors.invalidInput,
+    );
+  }
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -107,4 +121,38 @@ export const signOut = async (formData: FormData): Promise<void> => {
 
   revalidatePath("/", "layout");
   redirect(localizePath(locale, "/login"));
+};
+
+export const resendConfirmation = async (
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> => {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+
+  const parsed = emailSchema.safeParse({ email: formData.get("email") });
+  if (!parsed.success) return formError(dict.auth.errors.invalidInput);
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: parsed.data.email,
+  });
+
+  // Il tetto agli invii e' l'unico esito che merita una risposta diversa: qui
+  // "riprova fra poco" e' un'istruzione, mentre il messaggio neutro sotto
+  // farebbe aspettare un'email che non partira'.
+  if (
+    error?.code === "over_email_send_rate_limit" ||
+    error?.code === "over_request_rate_limit"
+  ) {
+    return formError(dict.auth.errors.rateLimited);
+  }
+
+  // Ogni altro esito da' la stessa risposta, riuscita o no: distinguerle
+  // trasformerebbe questo modulo, che non chiede nessuna password, in un modo
+  // per sapere quali indirizzi hanno un account. Dopo la scelta sul messaggio
+  // di `email_not_confirmed` la stessa cosa si ricava dal login, quindi qui non
+  // si sta proteggendo un segreto: si sta solo evitando di regalarlo due volte.
+  return formSuccess(dict.auth.resendDone);
 };
