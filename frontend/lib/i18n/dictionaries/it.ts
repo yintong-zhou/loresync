@@ -116,18 +116,13 @@ export const it = {
       "Ti abbiamo mandato una mail di conferma. Aprila per attivare l'account.",
     confirmPasswordLabel: "Conferma password",
     passwordMismatch: "Le due password non coincidono.",
-    resendTitle: "Non hai ricevuto l'email di conferma?",
-    resendCta: "Rimandala",
-    resendDone:
-      "Se quell'indirizzo ha un account da confermare, ti abbiamo mandato " +
-      "una nuova email.",
     errors: {
       // Volutamente identico per email inesistente e password sbagliata: un
       // messaggio diverso direbbe a chiunque quali indirizzi sono registrati.
       invalidCredentials: "Email o password non validi.",
       emailNotConfirmed:
-        "Devi confermare l'email prima di accedere. Se non ti è arrivata, " +
-        "puoi fartela rimandare qui sotto.",
+        "Devi confermare l'email prima di accedere. Controlla la posta, " +
+        "anche nella cartella dello spam.",
       invalidInput: "Controlla i dati inseriti.",
       emailTaken: "Esiste già un account con questa email.",
       weakPassword: "La password deve avere almeno 8 caratteri.",

@@ -30,8 +30,3 @@ export const signUpSchema = credentialsSchema
 
 export type Credentials = z.infer<typeof credentialsSchema>;
 export type SignUpInput = z.infer<typeof signUpSchema>;
-
-/** Solo l'indirizzo: reinvio della conferma, dove la password non c'entra. */
-export const emailSchema = z.object({
-  email: z.string().trim().email(),
-});

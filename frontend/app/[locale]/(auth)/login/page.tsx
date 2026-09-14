@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { LoginForm } from "@/components/auth/login-form";
-import { ResendConfirmation } from "@/components/auth/resend-confirmation";
 import { Logo } from "@/components/ui/logo";
-import { resendConfirmation, signIn, signUp } from "@/lib/auth/actions";
+import { signIn, signUp } from "@/lib/auth/actions";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale, localizePath } from "@/lib/i18n/config";
 
@@ -68,8 +67,6 @@ export default async function LoginPage({
             labels={dict.auth}
             common={dict.common}
           />
-
-          <ResendConfirmation action={resendConfirmation} labels={dict.auth} />
 
           <p className="mt-step-2">
             <Link

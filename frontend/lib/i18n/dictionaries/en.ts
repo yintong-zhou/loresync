@@ -108,16 +108,11 @@ export const en: Dictionary = {
       "We sent you a confirmation email. Open it to activate your account.",
     confirmPasswordLabel: "Confirm password",
     passwordMismatch: "The two passwords do not match.",
-    resendTitle: "Didn't get the confirmation email?",
-    resendCta: "Send it again",
-    resendDone:
-      "If that address has an account waiting for confirmation, we sent a " +
-      "new email.",
     errors: {
       invalidCredentials: "Invalid email or password.",
       emailNotConfirmed:
-        "You need to confirm your email before logging in. If it never " +
-        "arrived, you can have it sent again below.",
+        "You need to confirm your email before logging in. Check your inbox, " +
+        "including the spam folder.",
       invalidInput: "Check the details you entered.",
       emailTaken: "An account with this email already exists.",
       weakPassword: "The password must be at least 8 characters.",
