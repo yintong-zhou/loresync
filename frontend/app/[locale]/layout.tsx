@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Anton, Barlow } from "next/font/google";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
+import { Analytics } from "@vercel/analytics/next";
 import { CookieNotice } from "@/components/ui/cookie-notice";
 import { NOTICE_COOKIE, hasSeenNotice } from "@/lib/cookie-notice";
 import { getDictionary } from "@/lib/i18n";
@@ -77,6 +78,7 @@ export default async function LocaleLayout({
         {seenNotice ? null : (
           <CookieNotice locale={locale} labels={dict.notice} />
         )}
+        <Analytics />
       </body>
     </html>
   );
