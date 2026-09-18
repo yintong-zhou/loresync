@@ -67,3 +67,26 @@ export const authErrorMessage = (
       return errors.generic;
   }
 };
+
+/**
+ * Tipi di link email che questa applicazione puo' produrre.
+ *
+ * `EmailOtpType` di `@supabase/auth-js` termina con `(string & {})`, quindi
+ * accetta qualunque stringa: il cast nel callback non veniva rifiutato dal
+ * compilatore, e il valore della query string arrivava a `verifyOtp` cosi'
+ * com'era. Li' non fa danno — e' Supabase a scartarlo — ma il posto giusto
+ * per dire quali valori ci aspettiamo e' qui, non dentro al servizio altrui.
+ *
+ * L'elenco e' quello dei flussi attivi: conferma della registrazione, recupero
+ * password, cambio indirizzo. `magiclink`, `invite` e `email` restano fuori
+ * perche' non sono usati: attivandone uno in Supabase va aggiunto anche qui,
+ * altrimenti il link atterra sul login con `?error=link`.
+ */
+const HANDLED_OTP_TYPES = ["signup", "recovery", "email_change"] as const;
+
+export type HandledOtpType = (typeof HANDLED_OTP_TYPES)[number];
+
+export const isHandledOtpType = (
+  value: string | null,
+): value is HandledOtpType =>
+  value !== null && (HANDLED_OTP_TYPES as readonly string[]).includes(value);

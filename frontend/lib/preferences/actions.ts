@@ -4,12 +4,11 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ADULT_COOKIE, isAdultMode } from "@/lib/adult";
+import { PREFERENCE_MAX_AGE } from "@/lib/cookies";
 import { NOTICE_ACK, NOTICE_COOKIE } from "@/lib/cookie-notice";
 import { safeNextPath } from "@/lib/auth/helpers";
 import { getLocale } from "@/lib/i18n/server";
 
-/** Un anno: e' una preferenza, non uno stato di sessione. */
-const ONE_YEAR = 60 * 60 * 24 * 365;
 
 /**
  * Mostra o nasconde i contenuti per adulti.
@@ -41,7 +40,7 @@ export const setAdultMode = async (formData: FormData): Promise<void> => {
     const store = await cookies();
     store.set(ADULT_COOKIE, mode, {
       path: "/",
-      maxAge: ONE_YEAR,
+      maxAge: PREFERENCE_MAX_AGE,
       sameSite: "lax",
     });
   }
@@ -72,7 +71,7 @@ export const acknowledgeCookieNotice = async (): Promise<void> => {
   const store = await cookies();
   store.set(NOTICE_COOKIE, NOTICE_ACK, {
     path: "/",
-    maxAge: ONE_YEAR,
+    maxAge: PREFERENCE_MAX_AGE,
     sameSite: "lax",
   });
 

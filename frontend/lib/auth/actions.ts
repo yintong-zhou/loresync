@@ -10,6 +10,7 @@ import {
   localizePath,
 } from "@/lib/i18n/config";
 import { getLocale } from "@/lib/i18n/server";
+import { PREFERENCE_MAX_AGE } from "@/lib/cookies";
 import { createClient } from "@/lib/supabase/server";
 import { credentialsSchema, signUpSchema } from "@/lib/validation/auth";
 import {
@@ -113,7 +114,11 @@ export const signOut = async (formData: FormData): Promise<void> => {
 
   // La lingua non e' un dato di sessione: resta dopo il logout.
   const cookieStore = await cookies();
-  cookieStore.set(LOCALE_COOKIE, locale, { path: "/", sameSite: "lax" });
+  cookieStore.set(LOCALE_COOKIE, locale, {
+    path: "/",
+    maxAge: PREFERENCE_MAX_AGE,
+    sameSite: "lax",
+  });
 
   revalidatePath("/", "layout");
   redirect(localizePath(locale, "/login"));

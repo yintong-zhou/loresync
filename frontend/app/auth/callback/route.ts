@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import type { EmailOtpType } from "@supabase/supabase-js";
-import { safeNextPath } from "@/lib/auth/helpers";
+import { isHandledOtpType, safeNextPath } from "@/lib/auth/helpers";
 import {
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
@@ -43,8 +42,8 @@ export const GET = async (request: NextRequest) => {
 
   // Flusso a token: conferma registrazione e recupero password.
   const tokenHash = searchParams.get("token_hash");
-  const type = searchParams.get("type") as EmailOtpType | null;
-  if (tokenHash && type) {
+  const type = searchParams.get("type");
+  if (tokenHash && isHandledOtpType(type)) {
     const { error } = await supabase.auth.verifyOtp({
       type,
       token_hash: tokenHash,

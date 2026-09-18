@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { authErrorMessage } from "@/lib/auth/helpers";
+import { PREFERENCE_MAX_AGE } from "@/lib/cookies";
 import {
   formError,
   formSuccess,
@@ -67,7 +68,11 @@ export const updateProfile = async (
   const next = parsed.data.preferredLocale;
   if (next !== locale) {
     const cookieStore = await cookies();
-    cookieStore.set(LOCALE_COOKIE, next, { path: "/", sameSite: "lax" });
+    cookieStore.set(LOCALE_COOKIE, next, {
+      path: "/",
+      maxAge: PREFERENCE_MAX_AGE,
+      sameSite: "lax",
+    });
     revalidatePath("/", "layout");
     redirect(localizePath(next, "/account"));
   }

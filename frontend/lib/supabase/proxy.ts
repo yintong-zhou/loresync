@@ -9,6 +9,7 @@ import {
   splitLocale,
 } from "@/lib/i18n/config";
 import { ADULT_COOKIE, isAdultMode } from "@/lib/adult";
+import { PREFERENCE_MAX_AGE } from "@/lib/cookies";
 import { VIEW_COOKIE, isViewMode } from "@/lib/view-mode";
 
 // Vedi la nota in server.ts: i callback dei cookie vanno annotati a mano.
@@ -151,7 +152,7 @@ export const updateSession = async (request: NextRequest) => {
   // il selettore non ha bisogno di scrivere cookie lato client.
   supabaseResponse.cookies.set(LOCALE_COOKIE, locale, {
     path: "/",
-    maxAge: 60 * 60 * 24 * 365,
+    maxAge: PREFERENCE_MAX_AGE,
     sameSite: "lax",
   });
 
@@ -163,7 +164,7 @@ export const updateSession = async (request: NextRequest) => {
   if (view && isViewMode(view)) {
     supabaseResponse.cookies.set(VIEW_COOKIE, view, {
       path: "/",
-      maxAge: 60 * 60 * 24 * 365,
+      maxAge: PREFERENCE_MAX_AGE,
       sameSite: "lax",
     });
   }
@@ -174,7 +175,7 @@ export const updateSession = async (request: NextRequest) => {
   if (adult && isAdultMode(adult)) {
     supabaseResponse.cookies.set(ADULT_COOKIE, adult, {
       path: "/",
-      maxAge: 60 * 60 * 24 * 365,
+      maxAge: PREFERENCE_MAX_AGE,
       sameSite: "lax",
     });
   }
