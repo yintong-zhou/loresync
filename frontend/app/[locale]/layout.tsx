@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Anton, Barlow } from "next/font/google";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import { CookieNotice } from "@/components/ui/cookie-notice";
+import { NOTICE_COOKIE, hasSeenNotice } from "@/lib/cookie-notice";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/i18n/config";
 import "../globals.css";
@@ -58,10 +61,22 @@ export default async function LocaleLayout({
   // (`/de/...`) arriverebbe fin qui: meglio un 404 che un fallback silenzioso.
   if (!isLocale(locale)) notFound();
 
+  const dict = getDictionary(locale);
+
+  // La fascia sui cookie si decide qui e non nel browser: senza JavaScript
+  // deve funzionare comunque, e un componente client la mostrerebbe per un
+  // istante anche a chi l'ha gia' chiusa.
+  const seenNotice = hasSeenNotice(
+    (await cookies()).get(NOTICE_COOKIE)?.value,
+  );
+
   return (
     <html lang={locale} className={`${anton.variable} ${barlow.variable}`}>
       <body className="bg-neutral-light font-sans text-secondary antialiased">
         {children}
+        {seenNotice ? null : (
+          <CookieNotice locale={locale} labels={dict.notice} />
+        )}
       </body>
     </html>
   );

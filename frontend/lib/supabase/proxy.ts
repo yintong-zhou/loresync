@@ -98,7 +98,11 @@ export const updateSession = async (request: NextRequest) => {
   const isAuthRoute = rest.startsWith("/login");
   // La landing di presentazione deve restare raggiungibile da chi non ha un
   // account: e' il suo unico scopo. Ogni altra rotta pubblica va aggiunta qui.
-  const isPublicRoute = rest === "/" || isAuthRoute;
+  // Cookie e privacy: le legge chi sta decidendo se registrarsi, quindi prima
+  // di avere una sessione. Dietro al login un'informativa non informa nessuno.
+  const isLegalRoute =
+    rest.startsWith("/cookie") || rest.startsWith("/privacy");
+  const isPublicRoute = rest === "/" || isAuthRoute || isLegalRoute;
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();

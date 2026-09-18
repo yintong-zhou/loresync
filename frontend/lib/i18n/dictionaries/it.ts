@@ -170,6 +170,117 @@ export const it = {
       generic: "Non è stato possibile salvare. Riprova.",
     },
   },
+  legal: {
+    backHome: "Torna alla home",
+    cookie: {
+      title: "Cookie",
+      intro:
+        "Loresync usa solo cookie tecnici: quelli che servono a tenere " +
+        "l'accesso aperto e a ricordare le scelte fatte nell'interfaccia. " +
+        "Non c'è nulla da accettare o rifiutare, perché senza questi il sito " +
+        "non funzionerebbe o dimenticherebbe le preferenze a ogni pagina.",
+      tableName: "Nome",
+      tablePurpose: "A cosa serve",
+      tableDuration: "Durata",
+      rows: {
+        session: {
+          name: "sb-<progetto>-auth-token",
+          purpose:
+            "Mantiene l'accesso: identifica la sessione dopo il login. È " +
+            "impostato da Supabase, il servizio che gestisce autenticazione e " +
+            "database.",
+          duration: "Durata della sessione, rinnovata navigando",
+        },
+        locale: {
+          name: "NEXT_LOCALE",
+          purpose: "Ricorda la lingua scelta.",
+          duration: "Un anno",
+        },
+        view: {
+          name: "loresync-view",
+          purpose: "Ricorda se la libreria si apre a elenco o a griglia.",
+          duration: "Un anno",
+        },
+        adult: {
+          name: "loresync-adult",
+          purpose: "Ricorda se i contenuti per adulti sono nascosti.",
+          duration: "Un anno",
+        },
+        notice: {
+          name: "loresync-cookie-notice",
+          purpose:
+            "Ricorda che questa informativa è stata letta, per non " +
+            "riproporla a ogni pagina.",
+          duration: "Un anno",
+        },
+      },
+      noProfiling:
+        "Nessuno di questi cookie è di terze parti, nessuno profila e nessuno " +
+        "segue la navigazione fuori da questo sito. Non sono installati " +
+        "strumenti di analisi del traffico, né pixel, né script pubblicitari.",
+      manageHeading: "Come cancellarli",
+      manage:
+        "I cookie si cancellano e si bloccano dalle impostazioni del " +
+        "browser. Bloccando quello di sessione l'accesso smette di " +
+        "funzionare; bloccando gli altri le preferenze tornano ai valori " +
+        "iniziali a ogni visita.",
+    },
+    privacy: {
+      title: "Privacy",
+      whatHeading: "Quali dati vengono raccolti",
+      whatAccount:
+        "Dell'account: indirizzo email, password, e se li si compila nome " +
+        "visualizzato e lingua preferita. La password non viene mai " +
+        "conservata in chiaro né è visibile a nessuno: Supabase ne " +
+        "custodisce solo una versione cifrata, con cui si può verificare se " +
+        "quella digitata è giusta ma non risalire alla password stessa.",
+      whatLibrary:
+        "Della libreria: i link che si incollano, il capitolo raggiunto, il " +
+        "titolo, la descrizione e la copertina ricavati dalla pagina, i tag " +
+        "assegnati e lo stato di lettura.",
+      whyHeading: "Perché",
+      why:
+        "I dati dell'account servono a far funzionare l'accesso e a " +
+        "distinguere una libreria dall'altra. I dati della libreria sono il " +
+        "contenuto che l'utente inserisce, e conservarlo è la ragione per cui " +
+        "il servizio esiste. Non vengono usati per altro.",
+      whoHeading: "Chi altro li tratta",
+      whoSupabase:
+        "Supabase, per il database e l'autenticazione: è dove i dati sono " +
+        "effettivamente conservati.",
+      whoResend:
+        "Resend, solo per la consegna delle email di servizio — conferma " +
+        "dell'indirizzo, cambio email, recupero password. Riceve " +
+        "l'indirizzo del destinatario e il contenuto di quei messaggi, e " +
+        "nient'altro.",
+      notHeading: "Cosa non viene fatto",
+      not:
+        "Nessuna analisi del traffico, nessuna profilazione, nessuna " +
+        "pubblicità, nessuna decisione automatizzata sulle persone, nessuna " +
+        "cessione o vendita dei dati a terzi. Le librerie non sono visibili " +
+        "fra utenti: ognuno vede solo la propria.",
+      rightsHeading: "I tuoi diritti",
+      rightsIntro:
+        "Il regolamento europeo riconosce il diritto di accedere ai propri " +
+        "dati, correggerli, cancellarli, limitarne il trattamento, " +
+        "riceverli in un formato leggibile, opporsi al trattamento e " +
+        "presentare reclamo a un'autorità di controllo.",
+      rightsInProduct:
+        "Due si esercitano direttamente dall'applicazione, senza chiedere " +
+        "niente a nessuno: dalla pagina Account si correggono nome, lingua, " +
+        "email e password, e l'eliminazione dell'account cancella l'utenza " +
+        "e con essa l'intera libreria.",
+    },
+  },
+  notice: {
+    text:
+      "Questo sito usa solo cookie tecnici: tengono aperto l'accesso e " +
+      "ricordano lingua, vista e filtro dei contenuti. Non ci sono cookie " +
+      "di profilazione e non c'è niente da accettare.",
+    cta: "Ho capito",
+    cookieLink: "Informativa cookie",
+    privacyLink: "Privacy",
+  },
   library: {
     title: "La mia libreria",
     searchLabel: "Cerca",

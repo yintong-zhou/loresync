@@ -1,8 +1,10 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ADULT_COOKIE, isAdultMode } from "@/lib/adult";
+import { NOTICE_ACK, NOTICE_COOKIE } from "@/lib/cookie-notice";
 import { safeNextPath } from "@/lib/auth/helpers";
 import { getLocale } from "@/lib/i18n/server";
 
@@ -48,4 +50,32 @@ export const setAdultMode = async (formData: FormData): Promise<void> => {
   // uno: passa dallo stesso filtro del redirect dopo il login, che accetta
   // solo path interni e scarta gli URL assoluti.
   redirect(safeNextPath(typeof next === "string" ? next : null, locale));
+};
+
+/**
+ * Registra la presa d'atto dell'informativa sui cookie.
+ *
+ * Form POST come `setAdultMode`, e per la stessa ragione: un GET che cambia
+ * stato lo cambia anche quando nessuno ha cliccato. Qui il danno sarebbe
+ * piccolo — la fascia sparirebbe senza essere stata letta — ma sparirebbe
+ * proprio nel momento in cui il suo unico scopo e' essere letta.
+ *
+ * A differenza delle altre preferenze non fa `redirect`: rivalida e basta, e
+ * Next rirenderizza la pagina da cui e' partito il form. Cosi' non serve
+ * sapere dove ci si trovava — informazione che un layout non ha, e che si
+ * sarebbe dovuta far arrivare fin qui con un header messo dal proxy.
+ *
+ * Non salva un consenso: i cookie sono tutti tecnici e vengono impostati
+ * comunque. Vedi `lib/cookie-notice.ts`.
+ */
+export const acknowledgeCookieNotice = async (): Promise<void> => {
+  const store = await cookies();
+  store.set(NOTICE_COOKIE, NOTICE_ACK, {
+    path: "/",
+    maxAge: ONE_YEAR,
+    sameSite: "lax",
+  });
+
+  // `layout`: la fascia e' renderizzata dal layout radice, non dalla pagina.
+  revalidatePath("/", "layout");
 };

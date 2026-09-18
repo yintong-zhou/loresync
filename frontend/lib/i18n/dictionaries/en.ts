@@ -159,6 +159,114 @@ export const en: Dictionary = {
       generic: "Could not save. Try again.",
     },
   },
+  legal: {
+    backHome: "Back to home",
+    cookie: {
+      title: "Cookies",
+      intro:
+        "Loresync uses technical cookies only: the ones that keep you signed " +
+        "in and remember the choices you make in the interface. There is " +
+        "nothing to accept or refuse, because without them the site would " +
+        "not work, or would forget your preferences on every page.",
+      tableName: "Name",
+      tablePurpose: "What it does",
+      tableDuration: "Lifetime",
+      rows: {
+        session: {
+          name: "sb-<project>-auth-token",
+          purpose:
+            "Keeps you signed in: it identifies your session after login. " +
+            "Set by Supabase, the service that handles authentication and " +
+            "the database.",
+          duration: "The session, renewed as you browse",
+        },
+        locale: {
+          name: "NEXT_LOCALE",
+          purpose: "Remembers the language you picked.",
+          duration: "One year",
+        },
+        view: {
+          name: "loresync-view",
+          purpose: "Remembers whether the library opens as a list or a grid.",
+          duration: "One year",
+        },
+        adult: {
+          name: "loresync-adult",
+          purpose: "Remembers whether adult content is hidden.",
+          duration: "One year",
+        },
+        notice: {
+          name: "loresync-cookie-notice",
+          purpose:
+            "Remembers that this notice has been read, so it is not shown " +
+            "again on every page.",
+          duration: "One year",
+        },
+      },
+      noProfiling:
+        "None of these cookies are third-party, none profile you and none " +
+        "follow you outside this site. There is no traffic analytics, no " +
+        "tracking pixel and no advertising script.",
+      manageHeading: "How to delete them",
+      manage:
+        "Cookies can be deleted and blocked from your browser settings. " +
+        "Blocking the session cookie stops login from working; blocking the " +
+        "others resets your preferences on every visit.",
+    },
+    privacy: {
+      title: "Privacy",
+      whatHeading: "What data is collected",
+      whatAccount:
+        "For the account: email address, password, and — if you fill them " +
+        "in — display name and preferred language. The password is never " +
+        "stored in the clear and is not visible to anyone: Supabase keeps " +
+        "only an encrypted version, which can tell whether the password you " +
+        "typed is right but cannot reveal the password itself.",
+      whatLibrary:
+        "For the library: the links you paste, the chapter you reached, the " +
+        "title, description and cover taken from the page, the tags you " +
+        "assign and the reading status.",
+      whyHeading: "Why",
+      why:
+        "Account data makes login work and tells one library from another. " +
+        "Library data is the content you enter, and keeping it is the reason " +
+        "the service exists. Neither is used for anything else.",
+      whoHeading: "Who else processes it",
+      whoSupabase:
+        "Supabase, for the database and authentication: this is where the " +
+        "data actually lives.",
+      whoResend:
+        "Resend, only to deliver service emails — address confirmation, " +
+        "email change, password recovery. It receives the recipient address " +
+        "and the content of those messages, and nothing else.",
+      notHeading: "What is not done",
+      not:
+        "No traffic analytics, no profiling, no advertising, no automated " +
+        "decisions about people, no sharing or selling of data to third " +
+        "parties. Libraries are not visible between users: everyone sees " +
+        "only their own.",
+      rightsHeading: "Your rights",
+      rightsIntro:
+        "European regulation gives you the right to access your data, " +
+        "correct it, erase it, restrict its processing, receive it in a " +
+        "readable format, object to processing, and lodge a complaint with " +
+        "a supervisory authority.",
+      rightsInProduct:
+        "Two of them you exercise straight from the app, without asking " +
+        "anyone: the Account page corrects your name, language, email and " +
+        "password, and deleting your account removes it together with your " +
+        "entire library.",
+    },
+  },
+  notice: {
+    text:
+      "This site uses technical cookies only: they keep you signed in and " +
+      "remember your language, view and content filter. There are no " +
+      "profiling cookies and nothing to accept.",
+    cta: "Got it",
+    cookieLink: "Cookie notice",
+    privacyLink: "Privacy",
+  },
   library: {
     title: "My library",
     searchLabel: "Search",

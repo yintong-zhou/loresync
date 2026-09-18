@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
+import { LegalLinks } from "@/components/ui/legal-links";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import { Logo } from "@/components/ui/logo";
 import { signOut } from "@/lib/auth/actions";
@@ -79,6 +80,10 @@ export default async function AppLayout({
         </nav>
       </header>
       {children}
+
+      <footer className="mt-step-4 border-t-2 border-secondary pt-step-2">
+        <LegalLinks locale={locale} labels={dict.legal} />
+      </footer>
     </div>
   );
 }

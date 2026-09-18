@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LegalLinks } from "@/components/ui/legal-links";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import { Logo } from "@/components/ui/logo";
 import { getDictionary } from "@/lib/i18n";
@@ -210,6 +211,7 @@ export default async function HomePage({
         <p className="text-sm uppercase tracking-wide text-neutral-dark">
           {t.footer}
         </p>
+        <LegalLinks locale={locale} labels={dict.legal} />
       </footer>
     </>
   );
