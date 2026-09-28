@@ -216,8 +216,9 @@ export const it = {
       },
       noProfiling:
         "Nessuno di questi cookie è di terze parti, nessuno profila e nessuno " +
-        "segue la navigazione fuori da questo sito. Non sono installati " +
-        "strumenti di analisi del traffico, né pixel, né script pubblicitari.",
+        "segue la navigazione fuori da questo sito. Non ci sono pixel né " +
+        "script pubblicitari. Le statistiche di visita (Vercel Web " +
+        "Analytics) funzionano senza cookie.",
       manageHeading: "Come cancellarli",
       manage:
         "I cookie si cancellano e si bloccano dalle impostazioni del " +
@@ -253,10 +254,15 @@ export const it = {
         "dell'indirizzo, cambio email, recupero password. Riceve " +
         "l'indirizzo del destinatario e il contenuto di quei messaggi, e " +
         "nient'altro.",
+      whoVercel:
+        "Vercel, che ospita il sito e ne raccoglie statistiche di visita " +
+        "aggregate con Vercel Web Analytics: pagine viste, sito di " +
+        "provenienza, paese, tipo di browser e di dispositivo. Non usa " +
+        "cookie e non serve a riconoscere le persone.",
       notHeading: "Cosa non viene fatto",
       not:
-        "Nessuna analisi del traffico, nessuna profilazione, nessuna " +
-        "pubblicità, nessuna decisione automatizzata sulle persone, nessuna " +
+        "Nessuna profilazione, nessuna pubblicità, " +
+        "nessuna decisione automatizzata sulle persone, nessuna " +
         "cessione o vendita dei dati a terzi. Le librerie non sono visibili " +
         "fra utenti: ognuno vede solo la propria.",
       rightsHeading: "I tuoi diritti",

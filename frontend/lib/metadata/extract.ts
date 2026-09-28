@@ -1,4 +1,8 @@
-import { isPublicHost } from "./fetch-guard";
+import http, { type IncomingMessage } from "node:http";
+import https from "node:https";
+import type { Readable } from "node:stream";
+import zlib from "node:zlib";
+import { BlockedHostError, isPublicHost, pinnedLookup } from "./fetch-guard";
 import { chapterFromUrl, normalizeUrl } from "@/lib/url";
 
 /** Codici della tabella in `directives/extract_manga_metadata.md`. */
@@ -177,25 +181,80 @@ export const normalizeTitle = (raw: string, hostname: string): string => {
   return title.replace(/\s+/g, " ").trim().slice(0, 300);
 };
 
-/** Scarica il corpo fermandosi al tetto: una pagina enorme non ci interessa. */
-const readCapped = async (response: Response): Promise<string> => {
-  const body = response.body;
-  if (!body) return "";
+/**
+ * GET di una pagina con la connessione vincolata agli indirizzi approvati.
+ *
+ * Non usa `fetch`: il `fetch` nativo risolve l'host per conto suo, dopo il
+ * nostro controllo, e un DNS che cambia risposta nel mezzo lo porterebbe su
+ * un indirizzo interno. `http.request` accetta invece una `lookup`, e
+ * `pinnedLookup` verifica proprio la risposta usata per collegarsi. Host e SNI
+ * restano quelli dell'URL, quindi il TLS si valida come sempre.
+ */
+const guardedGet = (
+  url: URL,
+  userAgent: string,
+  signal: AbortSignal,
+): Promise<IncomingMessage> =>
+  new Promise((resolve, reject) => {
+    const client = url.protocol === "https:" ? https : http;
+    const request = client.request(url, {
+      method: "GET",
+      headers: {
+        "user-agent": userAgent,
+        accept: "text/html,application/xhtml+xml",
+        "accept-encoding": "gzip, deflate, br",
+      },
+      lookup: pinnedLookup,
+      signal,
+    });
+    request.once("response", resolve);
+    request.once("error", reject);
+    request.end();
+  });
 
-  const reader = body.getReader();
+/** Il corpo decompresso: `fetch` lo faceva da solo, `http` no. */
+const decodedBody = (response: IncomingMessage): Readable => {
+  switch (response.headers["content-encoding"]?.trim().toLowerCase()) {
+    case "gzip":
+    case "x-gzip":
+      return response.pipe(zlib.createGunzip());
+    case "deflate":
+      return response.pipe(zlib.createInflate());
+    case "br":
+      return response.pipe(zlib.createBrotliDecompress());
+    default:
+      return response;
+  }
+};
+
+/** Scarica il corpo fermandosi al tetto: una pagina enorme non ci interessa. */
+const readCapped = async (response: IncomingMessage): Promise<string> => {
+  const body = decodedBody(response);
   const decoder = new TextDecoder();
   const chunks: string[] = [];
   let size = 0;
 
-  while (size < MAX_BYTES) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    size += value.byteLength;
-    chunks.push(decoder.decode(value, { stream: true }));
+  try {
+    for await (const chunk of body) {
+      const bytes = chunk as Buffer;
+      size += bytes.byteLength;
+      chunks.push(decoder.decode(bytes, { stream: true }));
+      if (size >= MAX_BYTES) break;
+    }
+  } finally {
+    response.destroy();
   }
 
-  await reader.cancel().catch(() => undefined);
   return chunks.join("");
+};
+
+const failureCode = (
+  error: unknown,
+  signal: AbortSignal,
+): MetadataErrorCode => {
+  if (error instanceof BlockedHostError) return "blocked_host";
+  if (signal.aborted) return "fetch_timeout";
+  return "fetch_failed";
 };
 
 /**
@@ -214,35 +273,34 @@ export const extractMetadata = async (
   );
   const userAgent = process.env.METADATA_FETCH_USER_AGENT ?? DEFAULT_USER_AGENT;
 
+  // Un solo budget per tutta la catena, corpo compreso: con un timeout per hop
+  // ogni redirect lo faceva ripartire da capo.
+  const signal = AbortSignal.timeout(
+    Number.isFinite(timeout) && timeout > 0 ? timeout : 8000,
+  );
+
   let current = normalized;
-  let response: Response | null = null;
+  let response: IncomingMessage | null = null;
 
   // Redirect seguiti a mano: ogni hop va ricontrollato, altrimenti un host
   // pubblico potrebbe rimbalzare su un indirizzo interno.
   for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
+    // Controllo anticipato: gli IP letterali non passano dalla lookup, e per
+    // i nomi evita di aprire la connessione quando la risposta e' gia' no.
     if (!(await isPublicHost(current.hostname))) {
       return { ok: false, code: "blocked_host" };
     }
 
     try {
-      response = await fetch(current, {
-        redirect: "manual",
-        headers: {
-          "user-agent": userAgent,
-          accept: "text/html,application/xhtml+xml",
-        },
-        signal: AbortSignal.timeout(Number.isFinite(timeout) ? timeout : 8000),
-      });
+      response = await guardedGet(current, userAgent, signal);
     } catch (error) {
-      const name = error instanceof Error ? error.name : "";
-      return {
-        ok: false,
-        code: name === "TimeoutError" ? "fetch_timeout" : "fetch_failed",
-      };
+      return { ok: false, code: failureCode(error, signal) };
     }
 
-    if (response.status >= 300 && response.status < 400) {
-      const location = response.headers.get("location");
+    const status = response.statusCode ?? 0;
+    if (status >= 300 && status < 400) {
+      const location = response.headers.location;
+      response.destroy();
       if (!location) return { ok: false, code: "fetch_failed" };
 
       const next = normalizeUrl(new URL(location, current).toString());
@@ -257,18 +315,30 @@ export const extractMetadata = async (
 
   if (!response) return { ok: false, code: "fetch_failed" };
 
+  const status = response.statusCode ?? 0;
+
   // 403 e 503 sono il tipico blocco anti-bot: un tentativo, poi manuale.
-  if (response.status === 403 || response.status === 503) {
+  if (status === 403 || status === 503) {
+    response.destroy();
     return { ok: false, code: "needs_manual" };
   }
-  if (!response.ok) return { ok: false, code: "fetch_failed" };
+  if (status < 200 || status >= 300) {
+    response.destroy();
+    return { ok: false, code: "fetch_failed" };
+  }
 
-  const contentType = response.headers.get("content-type") ?? "";
+  const contentType = response.headers["content-type"] ?? "";
   if (!contentType.includes("html")) {
+    response.destroy();
     return { ok: false, code: "unsupported_content" };
   }
 
-  const html = await readCapped(response);
+  let html: string;
+  try {
+    html = await readCapped(response);
+  } catch (error) {
+    return { ok: false, code: failureCode(error, signal) };
+  }
 
   const meta = readMetaMap(html);
 

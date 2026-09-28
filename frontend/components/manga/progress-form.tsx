@@ -50,6 +50,9 @@ export const ProgressForm = ({
       // senza che nessuno l'abbia scritto nella casella.
       key={`${entry.status}:${entry.currentChapter ?? ""}`}
       action={updateProgress}
+      // In griglia l'invio chiude il pannello che contiene il form
+      // (`GridEditPanel`); in elenco nessuno lo ascolta.
+      data-closes-panel=""
       className={
         stacked
           ? "flex flex-col gap-step-1"

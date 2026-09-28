@@ -205,8 +205,9 @@ export const en: Dictionary = {
       },
       noProfiling:
         "None of these cookies are third-party, none profile you and none " +
-        "follow you outside this site. There is no traffic analytics, no " +
-        "tracking pixel and no advertising script.",
+        "follow you outside this site. There is no tracking pixel and no " +
+        "advertising script. Visit statistics (Vercel Web Analytics) work " +
+        "without cookies.",
       manageHeading: "How to delete them",
       manage:
         "Cookies can be deleted and blocked from your browser settings. " +
@@ -239,9 +240,14 @@ export const en: Dictionary = {
         "Resend, only to deliver service emails — address confirmation, " +
         "email change, password recovery. It receives the recipient address " +
         "and the content of those messages, and nothing else.",
+      whoVercel:
+        "Vercel, which hosts the site and collects aggregated visit " +
+        "statistics through Vercel Web Analytics: pages viewed, referring " +
+        "site, country, browser and device type. It uses no cookies and is " +
+        "not used to identify people.",
       notHeading: "What is not done",
       not:
-        "No traffic analytics, no profiling, no advertising, no automated " +
+        "No profiling, no advertising, no automated " +
         "decisions about people, no sharing or selling of data to third " +
         "parties. Libraries are not visible between users: everyone sees " +
         "only their own.",

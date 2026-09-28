@@ -45,6 +45,7 @@ export default async function PrivacyPage({
         <h2 className={HEADING_CLASS}>{t.whoHeading}</h2>
         <p className={BODY_CLASS}>{t.whoSupabase}</p>
         <p className={BODY_CLASS}>{t.whoResend}</p>
+        <p className={BODY_CLASS}>{t.whoVercel}</p>
       </section>
 
       <section>

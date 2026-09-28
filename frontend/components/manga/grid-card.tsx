@@ -1,6 +1,7 @@
 import { Cover } from "@/components/manga/cover";
 import { DeleteEntry } from "@/components/manga/delete-entry";
 import { EditEntryForm } from "@/components/manga/edit-entry-form";
+import { GridEditPanel } from "@/components/manga/grid-edit-panel";
 import { ProgressForm } from "@/components/manga/progress-form";
 import { BUTTON_SM_CLASS, CHIP_SM_CLASS } from "@/components/ui/form-styles";
 import { Icon } from "@/components/ui/icon";
@@ -26,8 +27,8 @@ import type { MangaEntry } from "@/lib/types";
  * e `DeleteEntry` sono condivisi, cosi' le due viste non possono divergere.
  *
  * Server Component: nessuno stato. Lo stato ce l'hanno `Cover`, che gestisce
- * le copertine che non caricano, e il pannello di modifica, che e' un
- * `details` e quindi lo tiene il browser.
+ * le copertine che non caricano, e `GridEditPanel`, che apre e chiude il
+ * pannello di modifica.
  */
 export const GridCard = ({
   entry,
@@ -78,49 +79,26 @@ export const GridCard = ({
         ) : null}
       </div>
 
-      {/* Pannello di modifica.
+      {/* Pannello di modifica: si chiude da solo quando si salva il
+          capitolo, vedi `GridEditPanel`. */}
+      <GridEditPanel label={labels.edit}>
+        <ProgressForm
+          entry={entry}
+          labels={labels}
+          statusLabels={statusLabels}
+          // In colonna: nel pannello stretto tre controlli in fila
+          // finirebbero larghi una parola ciascuno.
+          layout="stack"
+        />
 
-          `pointer-events-none` sul contenitore e `auto` sui due pezzi che
-          contano: chiuso, il `details` e' una fascia larga quanto la scheda
-          alta trentadue pixel, e senza questo intercetterebbe i click su una
-          striscia di copertina per niente.
+        <EditEntryForm
+          action={updateDetails}
+          entry={entry}
+          labels={labels}
+        />
 
-          `z-20`: aperto, il pannello puo' superare l'altezza della scheda e
-          finire sopra quelle della riga sotto. Senza, sarebbero loro a
-          coprirlo, perche' a parita' di livello vince chi viene dopo. */}
-      <details className="pointer-events-none absolute inset-x-0 top-0 z-20">
-        {/* Le classi sono scritte qui e non prese da `BUTTON_ICON_SM_CLASS`
-            perche' il pulsante dev'essere di livello blocco per potersi
-            spingere a destra con `ml-auto`, e quella costante e' `inline-flex`.
-            `list-none` e la regola webkit tolgono il triangolino: qui il
-            comando e' l'icona, e un marcatore accanto sarebbe rumore. */}
-        <summary className="pointer-events-auto ml-auto flex h-8 w-8 cursor-pointer list-none items-center justify-center border-2 border-secondary bg-neutral-light hover:border-primary hover:text-primary [&::-webkit-details-marker]:hidden">
-          <Icon name="edit" />
-          {/* Il nome del comando resta scritto, per chi non vede l'icona. */}
-          <span className="sr-only">{labels.edit}</span>
-        </summary>
-
-        {/* Fondo pieno e bordo: aperto copre la copertina, e deve leggersi
-            come un pannello posato sopra, non come testo sull'immagine. */}
-        <div className="pointer-events-auto mt-step-1 flex flex-col gap-step-1 border-2 border-secondary bg-neutral-light p-step-1">
-          <ProgressForm
-            entry={entry}
-            labels={labels}
-            statusLabels={statusLabels}
-            // In colonna: nel pannello stretto tre controlli in fila
-            // finirebbero larghi una parola ciascuno.
-            layout="stack"
-          />
-
-          <EditEntryForm
-            action={updateDetails}
-            entry={entry}
-            labels={labels}
-          />
-
-          <DeleteEntry entry={entry} labels={labels} full />
-        </div>
-      </details>
+        <DeleteEntry entry={entry} labels={labels} full />
+      </GridEditPanel>
 
       <div>
         {/* `break-words`: in colonna stretta un titolo senza spazi sfonderebbe

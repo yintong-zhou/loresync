@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { extractMetadata, type MetadataErrorCode } from "@/lib/metadata/extract";
+import { takeMetadataSlot } from "@/lib/metadata/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { metadataRequestSchema } from "@/lib/validation/manga";
 
@@ -30,6 +31,19 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  // Prima di leggere il corpo e di qualunque DNS: una richiesta respinta non
+  // deve costare lavoro di rete.
+  const slot = takeMetadataSlot(user.id);
+  if (!slot.allowed) {
+    return NextResponse.json(
+      { error: "rate_limited" },
+      {
+        status: 429,
+        headers: { "retry-after": String(slot.retryAfterSeconds) },
+      },
+    );
   }
 
   let body: unknown;

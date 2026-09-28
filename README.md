@@ -119,7 +119,9 @@ instead of Supabase's built-in sender, which is capped at a couple of messages
 per hour. Nothing about this lives in the app: no dependency, no env var read at
 runtime. It is configured in the Supabase dashboard, under Authentication.
 
-- **Email → Confirm email**: on.
+- **Email → Confirm email**: off. Sign-up opens the session immediately and
+  sends no confirmation email; `signUp` in `lib/auth/actions.ts` still handles
+  the confirmation branch in case it is turned back on.
 - **Email → SMTP Settings**: host `smtp.resend.com`, port `465` (or `587` for
   STARTTLS), username `resend`, password = a Resend API key.
 - **Email templates**: point every link at

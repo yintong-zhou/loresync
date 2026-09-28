@@ -12,7 +12,8 @@ l'estrazione fallisce.
 - `url` (obbligatorio): stringa `http`/`https` inserita dall'utente nel form.
   Validata da `metadataRequestSchema` in `frontend/lib/validation/manga.ts`.
 - `METADATA_FETCH_USER_AGENT`: User-Agent dichiarato nel fetch (da `.env`).
-- `METADATA_FETCH_TIMEOUT_MS`: timeout del fetch, default 8000 (da `.env`).
+- `METADATA_FETCH_TIMEOUT_MS`: budget totale dell'estrazione, redirect e
+  corpo compresi, default 8000 (da `.env`).
 
 ## Tool da usare
 
@@ -31,8 +32,17 @@ Nessuno script in `execution/`: la procedura è interamente runtime.
    (`localhost`, `127.0.0.0/8`, `10/8`, `172.16/12`, `192.168/16`, `169.254/16`,
    `::1`, IPv6 link-local) e gli schemi non HTTP. L'URL arriva da input utente:
    senza questo controllo la route diventa un proxy verso la rete interna.
+   Due regole che il controllo deve rispettare:
+   - gli indirizzi si confrontano sui byte, non sul testo: `::ffff:127.0.0.1`
+     e `::ffff:7f00:1` sono lo stesso loopback, e il parser URL produce la
+     seconda grafia. Per IPv6 e' pubblico solo `2000::/3`; IPv4 mappato, NAT64
+     e 6to4 si giudicano sull'IPv4 che contengono;
+   - la verifica deve stare nella risoluzione usata dalla connessione
+     (`pinnedLookup`), non in una lookup separata prima del fetch: fra le due
+     un DNS ostile puo' cambiare risposta (DNS rebinding). Per questo si usa
+     `http.request` con `lookup` e non il `fetch` nativo.
 3. **Scarica la pagina.** `GET` con lo User-Agent configurato,
-   `Accept: text/html`, timeout dalla env, massimo 2 redirect (ricontrolla il
+   `Accept: text/html`, un solo timeout per l'intera catena, massimo 2 redirect (ricontrolla il
    guardrail del punto 2 su ogni hop), corpo troncato a 512 KB. Se il
    `Content-Type` non è HTML, esci con `unsupported_content`.
 4. **Raccogli i candidati titolo**, nell'ordine: `og:title` →
@@ -82,6 +92,7 @@ aggiungere una serie alla libreria.
 | `fetch_failed` | 502 | DNS, TLS, 5xx della sorgente | Invito a compilare a mano |
 | `fetch_timeout` | 504 | Superato `METADATA_FETCH_TIMEOUT_MS` | Invito a compilare a mano |
 | `needs_manual` | 422 | Bot block, o nessun titolo trovato | Invito a compilare a mano |
+| `rate_limited` | 429 | Oltre 10 richieste/minuto per utente, con `Retry-After` | Invito a compilare a mano |
 
 ## Casi limite e vincoli noti
 
@@ -107,7 +118,10 @@ aggiungere una serie alla libreria.
   la deduplica richiederebbe un database di titoli esterno, fuori scope.
 - **Rate limiting in uscita.** Un utente che importa venti serie di fila fa
   venti fetch verso lo stesso host. Limita per utente (es. 10 richieste/minuto)
-  prima di prendere un ban IP sulla sorgente.
+  prima di prendere un ban IP sulla sorgente. Implementato in
+  `frontend/lib/metadata/rate-limit.ts`, controllato prima di qualunque DNS.
+  Il contatore e' in memoria per istanza: su piu' istanze il tetto reale si
+  moltiplica; per una quota esatta serve uno store condiviso.
 - **Redirect a pagina di login o di errore.** Alcuni siti rimandano a una
   landing generica: se il titolo estratto coincide col nome del sito, è
   probabile un falso positivo → `needs_manual`.
@@ -134,3 +148,7 @@ ancora giustificato.
 - 2026-09-10: prima stesura. Tabella override vuota, la strategia generica del
   punto 4 è l'unico percorso attivo. Stabilito che gli override sono forniti
   dall'utente, non ricavati automaticamente.
+- 2026-09-29: dopo l'audit di sicurezza, guardrail SSRF sui byte degli
+  indirizzi e vincolato alla connessione (chiude il bypass IPv6 mappato e il
+  DNS rebinding), timeout unico sulla catena di redirect, rate limit per
+  utente con codice `rate_limited`.
