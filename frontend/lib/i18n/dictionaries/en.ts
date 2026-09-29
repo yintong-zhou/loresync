@@ -280,6 +280,7 @@ export const en: Dictionary = {
     anyStatus: "All",
     anyTag: "All",
     filter: "Filter",
+    filters: "Filters",
     clear: "Clear",
     viewLabel: "View",
     viewList: "List",

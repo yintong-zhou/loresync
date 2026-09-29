@@ -294,6 +294,7 @@ export const it = {
     anyStatus: "Tutti",
     anyTag: "Tutti",
     filter: "Filtra",
+    filters: "Filtri",
     clear: "Azzera",
     viewLabel: "Vista",
     viewList: "Elenco",

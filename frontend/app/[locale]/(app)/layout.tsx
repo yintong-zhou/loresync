@@ -12,10 +12,12 @@ import {
   localizePath,
 } from "@/lib/i18n/config";
 
-// `inline-flex` e `gap`: l'icona sta in fila con l'etichetta e si stacca da
-// sola. L'allineamento verticale lo decide il contenitore, vedi sotto.
+// Su telefono le tre voci sono schede a larghezza uguale, con l'icona sopra
+// l'etichetta e un'altezza da pollice (48px); da `md` tornano una riga di testo
+// con l'icona accanto. `gap` stacca l'icona dall'etichetta in entrambi i casi.
+// L'allineamento verticale lo decide il contenitore, vedi sotto.
 const NAV_CLASS =
-  "inline-flex items-center gap-step-1 text-sm font-bold uppercase tracking-wide hover:text-primary";
+  "flex min-h-12 flex-col items-center justify-center gap-step-1 text-xs font-bold uppercase tracking-wide hover:text-primary md:inline-flex md:min-h-0 md:flex-row md:text-sm";
 
 // Layout dell'area autenticata. La sessione e' verificata dal proxy, che
 // rimanda a /login prima che questo layout venga renderizzato.
@@ -36,21 +38,27 @@ export default async function AppLayout({
 
   return (
     <div className="mx-auto max-w-6xl px-step-2 py-step-3 md:px-step-3">
-      <header className="mb-step-3 flex flex-wrap items-baseline justify-between gap-step-2 border-b-2 border-secondary pb-step-2">
+      {/* Su telefono l'intestazione ha due righe: in alto il logo con gli
+          strumenti (lingua, esci), sotto le tre voci di navigazione a tutta
+          larghezza. Da `md` e' una riga sola, come prima. L'ordine visivo lo
+          decide `order`, non il DOM: cosi' lingua e logout esistono una volta
+          sola e la lettura da tastiera resta logo, voci, strumenti. */}
+      <header className="mb-step-3 flex flex-wrap items-center justify-between gap-x-step-2 gap-y-step-1 border-b-2 border-secondary pb-step-2 md:items-baseline md:justify-start">
         {/* `items-center` sul link, non `items-baseline` come sul contenitore:
             il segno non ha linea di base, e allineato a quella del testo
             risulterebbe sfalsato verso l'alto. */}
         <Link
           href={localizePath(locale, "/dashboard")}
-          className="flex items-center gap-step-1 font-heading text-2xl uppercase"
+          className="order-1 flex items-center gap-step-1 font-heading text-2xl uppercase"
         >
           <Logo size={32} />
           Loresync
         </Link>
 
-        {/* `items-center` e non `items-baseline`: con un'icona dentro, la
-            linea di base allineerebbe il testo lasciando il glifo sfalsato. */}
-        <nav className="flex flex-wrap items-center gap-step-3">
+        {/* Le schede sono divise da un filetto e non da un `gap`: cosi' sono
+            tre bersagli adiacenti, senza spazi morti dove il tocco non
+            arriva. */}
+        <nav className="order-3 grid w-full grid-cols-3 divide-x-2 divide-secondary border-2 border-secondary md:order-2 md:ml-auto md:flex md:w-auto md:items-center md:gap-step-3 md:divide-x-0 md:border-0">
           <Link href={localizePath(locale, "/dashboard")} className={NAV_CLASS}>
             <Icon name="chart" />
             {dict.nav.dashboard}
@@ -63,21 +71,29 @@ export default async function AppLayout({
             <Icon name="user" />
             {dict.nav.account}
           </Link>
+        </nav>
 
+        {/* `items-center` e non `items-baseline`: con un'icona dentro, la
+            linea di base allineerebbe il testo lasciando il glifo sfalsato. */}
+        <div className="order-2 flex items-center gap-step-1 md:order-3 md:ml-step-3 md:gap-step-3">
           <LocaleSwitcher current={locale} labels={languageNames} />
 
           {/* Il logout cambia stato, quindi e' un form POST e non un link: un
-              GET puo' essere seguito da un prefetch o da un antivirus. */}
+              GET puo' essere seguito da un prefetch o da un antivirus.
+              Su telefono e' un riquadro di sola icona, con il nome in
+              `sr-only`: da `md` torna il testo sottolineato. */}
           <form action={signOut}>
             <button
               type="submit"
-              className="inline-flex items-center gap-step-1 border-b-2 border-secondary text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary"
+              className="inline-flex h-12 w-12 items-center justify-center gap-step-1 border-2 border-secondary text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary md:h-auto md:w-auto md:border-0 md:border-b-2"
             >
               <Icon name="exit" />
-              {dict.account.signOut}
+              <span className="sr-only md:not-sr-only">
+                {dict.account.signOut}
+              </span>
             </button>
           </form>
-        </nav>
+        </div>
       </header>
       {children}
 

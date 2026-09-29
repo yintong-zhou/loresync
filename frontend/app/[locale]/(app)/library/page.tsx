@@ -7,12 +7,12 @@ import { Pagination } from "@/components/manga/pagination";
 import { ViewToggle } from "@/components/manga/view-toggle";
 import {
   BUTTON_CLASS,
-  BUTTON_GHOST_SM_CLASS,
-  BUTTON_SM_CLASS,
-  FIELD_SM_CLASS,
+  BUTTON_FILTER_CLASS,
+  BUTTON_GHOST_FILTER_CLASS,
+  FIELD_FILTER_CLASS,
   LABEL_CLASS,
   OPTION_CLASS,
-  SELECT_SM_CLASS,
+  SELECT_FILTER_CLASS,
 } from "@/components/ui/form-styles";
 import { Icon } from "@/components/ui/icon";
 import { getDictionary } from "@/lib/i18n";
@@ -80,6 +80,12 @@ export default async function LibraryPage({
 
   const hasFilters = Boolean(q?.trim() || parsedStatus.success || tag?.trim());
 
+  // I filtri che su telefono stanno nel pannello: la ricerca no, perche' ha il
+  // suo campo sempre in vista. Il pannello si apre da solo se ce n'e' uno
+  // attivo, cosi' chi torna su una ricerca condivisa vede cosa la restringe.
+  const panelFilterCount =
+    (parsedStatus.success ? 1 : 0) + (tag?.trim() ? 1 : 0);
+
   const sortLabels: Record<SortKey, string> = {
     recent: t.sortNewest,
     oldest: t.sortOldest,
@@ -97,6 +103,25 @@ export default async function LibraryPage({
     adult: adultMode,
     page: currentPage,
   };
+
+  // Azzera i filtri, non la vista, l'ordinamento o la scelta sui contenuti per
+  // adulti: quella e' una preferenza, non un filtro di ricerca, e non si
+  // azzera con gli altri. Compare in due punti — accanto a "Filtra" da `md`, in
+  // fila col pannello su telefono — quindi il `className` lo decide chi lo
+  // mette, e il resto sta qui una volta sola.
+  const clearLink = (className: string) => (
+    <Link
+      href={libraryHref(locale, {
+        sort: sortKey,
+        view: viewMode,
+        adult: adultMode,
+      })}
+      className={`${BUTTON_GHOST_FILTER_CLASS} ${className}`}
+    >
+      <Icon name="close" />
+      {t.clear}
+    </Link>
+  );
 
   return (
     <main className="flex flex-col gap-step-2">
@@ -129,110 +154,160 @@ export default async function LibraryPage({
             che hai appena nascosto. */}
         <input type="hidden" name="adult" value={adultMode} />
 
+        {/* Interruttore del pannello dei filtri su telefono. E' una casella
+            senza `name`, quindi non viaggia nell'URL, e il pannello lo
+            comanda il CSS (`peer-checked`) e non JavaScript: i filtri sono un
+            form GET che deve funzionare anche senza. Sta prima del pannello
+            perche' `peer` vede solo i fratelli che lo seguono. Da `md` non
+            serve piu': il pannello e' sempre aperto. */}
+        <input
+          id="filters-toggle"
+          type="checkbox"
+          defaultChecked={panelFilterCount > 0}
+          className="peer sr-only"
+        />
+
         {/* Le larghezze seguono quanto serve alle etichette piu' lunghe, non
             una spartizione in parti uguali, e cambiano due volte invece di una
             sola: su schermo largo (`lg`) i cinque controlli stanno in fila,
             mentre nella fascia intermedia i dodicesimi non bastano — le voci
             venivano tagliate a meta' parola — e la riga si spezza, con la
-            ricerca sopra e le tre tendine sotto. */}
+            ricerca sopra e le tre tendine sotto.
+            Sotto `md` la barra e' un'altra: la ricerca da sola in cima con il
+            suo pulsante, una riga con "Filtri" e "Azzera", e le tendine nel
+            pannello che si apre. Cosi' la lista dei risultati compare nel
+            primo schermo invece che sotto quattro righe di controlli. */}
         <div className="col-span-12 lg:col-span-3">
-          <label className={LABEL_CLASS} htmlFor="q">
+          {/* Su telefono il segnaposto basta a dire cosa fa il campo. */}
+          <label
+            className={`${LABEL_CLASS} sr-only md:not-sr-only`}
+            htmlFor="q"
+          >
             {t.searchLabel}
           </label>
-          <input
-            id="q"
-            name="q"
-            type="search"
-            defaultValue={q ?? ""}
-            placeholder={t.searchPlaceholder}
-            className={`mt-step-1 w-full ${FIELD_SM_CLASS}`}
-          />
+          <div className="flex gap-step-1 md:mt-step-1 md:block">
+            <input
+              id="q"
+              name="q"
+              type="search"
+              defaultValue={q ?? ""}
+              placeholder={t.searchPlaceholder}
+              className={`min-w-0 flex-1 md:w-full ${FIELD_FILTER_CLASS}`}
+            />
+            {/* Il pulsante di invio accanto al campo, solo su telefono; da `md`
+                ce n'e' uno in fondo alla barra, vedi sotto. Nascosto con
+                `display: none` non e' raggiungibile da tastiera, quindi non
+                ci sono due tappe per lo stesso comando. */}
+            <button
+              type="submit"
+              className={`${BUTTON_FILTER_CLASS} w-12 px-0 md:hidden`}
+            >
+              <Icon name="search" />
+              <span className="sr-only">{t.filter}</span>
+            </button>
+          </div>
         </div>
 
-        <div className="col-span-6 md:col-span-4 lg:col-span-2">
-          <label className={LABEL_CLASS} htmlFor="status">
-            {dict.manga.statusLabel}
-          </label>
-          <select
-            id="status"
-            name="status"
-            defaultValue={parsedStatus.success ? parsedStatus.data : ""}
-            className={`mt-step-1 w-full ${SELECT_SM_CLASS}`}
-          >
-            <option className={OPTION_CLASS} value="">
-              {t.anyStatus}
-            </option>
-            {READING_STATUSES.map((value) => (
-              <option className={OPTION_CLASS} key={value} value={value}>
-                {dict.readingStatus[value]}
+        {/* Il colore pieno a pannello aperto dice che i filtri sono in vista,
+            come gli altri interruttori della pagina. Il numero dice quanti ne
+            hai attivi anche a pannello chiuso. */}
+        <label
+          htmlFor="filters-toggle"
+          className={`${BUTTON_GHOST_FILTER_CLASS} cursor-pointer peer-checked:border-secondary peer-checked:bg-secondary peer-checked:text-neutral-light peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary md:hidden ${
+            hasFilters ? "col-span-6" : "col-span-12"
+          }`}
+        >
+          {t.filters}
+          {panelFilterCount > 0 ? ` (${panelFilterCount})` : null}
+        </label>
+        {hasFilters ? clearLink("col-span-6 md:hidden") : null}
+
+        {/* Il pannello e' nascosto su telefono finche' la casella non e'
+            spuntata. Da `md` diventa `contents`: sparisce come scatola e le
+            tre tendine tornano figlie dirette della griglia dodici colonne,
+            cioe' la barra di prima, senza duplicare i campi. */}
+        <div className="col-span-12 hidden grid-cols-12 gap-step-1 peer-checked:grid md:contents">
+          <div className="col-span-6 md:col-span-4 lg:col-span-2">
+            <label className={LABEL_CLASS} htmlFor="status">
+              {dict.manga.statusLabel}
+            </label>
+            <select
+              id="status"
+              name="status"
+              defaultValue={parsedStatus.success ? parsedStatus.data : ""}
+              className={`mt-step-1 w-full ${SELECT_FILTER_CLASS}`}
+            >
+              <option className={OPTION_CLASS} value="">
+                {t.anyStatus}
               </option>
-            ))}
-          </select>
-        </div>
+              {READING_STATUSES.map((value) => (
+                <option className={OPTION_CLASS} key={value} value={value}>
+                  {dict.readingStatus[value]}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="col-span-6 md:col-span-4 lg:col-span-2">
-          <label className={LABEL_CLASS} htmlFor="tag">
-            {dict.manga.tagsLabel}
-          </label>
-          <select
-            id="tag"
-            name="tag"
-            defaultValue={tag ?? ""}
-            className={`mt-step-1 w-full ${SELECT_SM_CLASS}`}
-          >
-            <option className={OPTION_CLASS} value="">
-              {t.anyTag}
-            </option>
-            {allTags.map((value) => (
-              <option className={OPTION_CLASS} key={value} value={value}>
-                {value}
+          <div className="col-span-6 md:col-span-4 lg:col-span-2">
+            <label className={LABEL_CLASS} htmlFor="tag">
+              {dict.manga.tagsLabel}
+            </label>
+            <select
+              id="tag"
+              name="tag"
+              defaultValue={tag ?? ""}
+              className={`mt-step-1 w-full ${SELECT_FILTER_CLASS}`}
+            >
+              <option className={OPTION_CLASS} value="">
+                {t.anyTag}
               </option>
-            ))}
-          </select>
-        </div>
+              {allTags.map((value) => (
+                <option className={OPTION_CLASS} key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        {/* L'ordinamento sta dentro il form dei filtri e non a parte: si
-            applica con lo stesso pulsante, cosi' cambiare ordine e filtro
-            insieme costa un viaggio solo. */}
-        <div className="col-span-12 md:col-span-4 lg:col-span-3">
-          <label className={LABEL_CLASS} htmlFor="sort">
-            {t.sortLabel}
-          </label>
-          <select
-            id="sort"
-            name="sort"
-            defaultValue={sortKey}
-            className={`mt-step-1 w-full ${SELECT_SM_CLASS}`}
+          {/* L'ordinamento sta dentro il form dei filtri e non a parte: si
+              applica con lo stesso pulsante, cosi' cambiare ordine e filtro
+              insieme costa un viaggio solo. */}
+          <div className="col-span-12 md:col-span-4 lg:col-span-3">
+            <label className={LABEL_CLASS} htmlFor="sort">
+              {t.sortLabel}
+            </label>
+            <select
+              id="sort"
+              name="sort"
+              defaultValue={sortKey}
+              className={`mt-step-1 w-full ${SELECT_FILTER_CLASS}`}
+            >
+              {SORT_KEYS.map((value) => (
+                <option className={OPTION_CLASS} key={value} value={value}>
+                  {sortLabels[value]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Su telefono, con il pannello aperto, i filtri nuovi si applicano
+              da qui: il pulsante accanto alla ricerca e' lontano dalle
+              tendine appena cambiate. */}
+          <button
+            type="submit"
+            className={`${BUTTON_FILTER_CLASS} col-span-12 md:hidden`}
           >
-            {SORT_KEYS.map((value) => (
-              <option className={OPTION_CLASS} key={value} value={value}>
-                {sortLabels[value]}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="col-span-12 flex gap-step-1 lg:col-span-2">
-          <button type="submit" className={BUTTON_SM_CLASS}>
             <Icon name="search" />
             {t.filter}
           </button>
-          {hasFilters ? (
-            <Link
-              // Azzera i filtri, non la vista, l'ordinamento o la scelta sui
-              // contenuti per adulti: quella e' una preferenza, non un filtro
-              // di ricerca, e non si azzera con gli altri.
-              href={libraryHref(locale, {
-                sort: sortKey,
-                view: viewMode,
-                adult: adultMode,
-              })}
-              className={BUTTON_GHOST_SM_CLASS}
-            >
-              <Icon name="close" />
-              {t.clear}
-            </Link>
-          ) : null}
+        </div>
+
+        <div className="col-span-12 hidden gap-step-1 md:flex lg:col-span-2">
+          <button type="submit" className={BUTTON_FILTER_CLASS}>
+            <Icon name="search" />
+            {t.filter}
+          </button>
+          {hasFilters ? clearLink("") : null}
         </div>
       </form>
 

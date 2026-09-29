@@ -9,6 +9,11 @@ import {
   type Locale,
 } from "@/lib/i18n/config";
 
+// Su telefono ogni codice e' un riquadro da 48px: due lettere a corpo `sm`
+// sono un bersaglio troppo piccolo per il pollice. Da `md` torna il testo nudo.
+const TARGET =
+  "inline-flex h-12 min-w-10 items-center justify-center text-sm uppercase tracking-wide md:h-auto md:min-w-0";
+
 /**
  * Selettore di lingua.
  *
@@ -28,13 +33,13 @@ export const LocaleSwitcher = ({
   const { rest } = splitLocale(pathname);
 
   return (
-    <nav className="flex items-baseline gap-step-1">
+    <nav className="flex items-center gap-step-1 md:items-baseline">
       {LOCALES.map((locale) =>
         locale === current ? (
           <span
             key={locale}
             aria-current="true"
-            className="text-sm font-bold uppercase tracking-wide text-primary"
+            className={`${TARGET} font-bold text-primary`}
           >
             {locale}
           </span>
@@ -46,7 +51,7 @@ export const LocaleSwitcher = ({
             // Il nome pieno resta accessibile a chi usa uno screen reader,
             // mentre a schermo bastano due lettere.
             aria-label={labels[locale]}
-            className="text-sm uppercase tracking-wide text-neutral-dark hover:text-primary"
+            className={`${TARGET} text-neutral-dark hover:text-primary`}
           >
             {locale}
           </Link>

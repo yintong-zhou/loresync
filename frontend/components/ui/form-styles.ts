@@ -51,6 +51,26 @@ export const SELECT_SM_CLASS = `${FIELD_SM_CLASS} uppercase tracking-wide`;
 
 export const OPTION_CLASS = "uppercase";
 
+/**
+ * Controlli della barra dei filtri, pensati per il pollice.
+ *
+ * Sotto `md` alti 48px, non i 32px delle varianti `_SM`: sono un multiplo di 8
+ * come vuole il brand e stanno sopra i 44px sotto i quali il tocco sbaglia
+ * bersaglio. Il testo e' `text-base` per lo stesso motivo di `FIELD_CLASS`:
+ * sotto i 16px iOS ingrandisce la pagina quando il campo riceve il fuoco.
+ * Da `md` in su tornano identici alle varianti `_SM`, perche' col mouse la
+ * barra deve restare compatta.
+ */
+const HEIGHT_FILTER = "h-12 md:h-8";
+
+export const FIELD_FILTER_CLASS = `${HEIGHT_FILTER} ${BOX} border-secondary bg-neutral-light px-step-2 text-base md:px-step-1 md:text-sm`;
+
+export const SELECT_FILTER_CLASS = `${FIELD_FILTER_CLASS} uppercase tracking-wide`;
+
+export const BUTTON_FILTER_CLASS = `${HEIGHT_FILTER} ${BOX} ${LABELLED} border-primary bg-primary px-step-2 text-base text-neutral-light hover:border-secondary hover:bg-secondary md:text-sm`;
+
+export const BUTTON_GHOST_FILTER_CLASS = `${HEIGHT_FILTER} ${BOX} ${LABELLED} border-secondary px-step-2 text-base hover:border-primary hover:text-primary md:text-sm`;
+
 /** La textarea cresce in altezza: unico controllo senza altezza fissa. */
 export const TEXTAREA_CLASS = `w-full ${BOX} border-secondary bg-neutral-light px-step-2 py-step-1 text-base`;
 
