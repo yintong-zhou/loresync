@@ -55,9 +55,14 @@ Servono dove lo scambio darebbe un risultato sbagliato:
   173 di `app/[locale]/page.tsx`) → `bg-ink text-paper`;
 - testo sul riquadro giallo di `components/ui/form-message.tsx` → `text-ink`.
 
-Le classi di hover che riempiono di `secondary` con testo `neutral-light`
-(`hover:bg-secondary`, interruttori attivi) si invertono in coppia e restano
-coerenti: nel tema scuro il riempimento è chiaro con testo scuro.
+Chi *riempie* di `secondary` all'hover (i pulsanti rossi, `hover:bg-secondary`)
+non si inverte da solo: con il testo fisso `paper` nel tema scuro sarebbe chiaro
+su chiaro. Per questo quei pulsanti hanno `text-paper` a riposo e
+`hover:text-neutral-light` in hover, così il testo segue il riempimento. Gli
+interruttori attivi (`bg-secondary text-neutral-light`) si invertono in coppia e
+non cambiano. Anche il chip "in corso" della landing (`bg-accent`) ha `text-ink`.
+Nel tema scuro le fasce `bg-ink` della landing hanno lo stesso colore della
+pagina (`#050505`): restano distinte solo per i filetti, non per il fondo.
 
 ### 2. Selezione del tema
 
@@ -82,13 +87,15 @@ coerenti: nel tema scuro il riempimento è chiaro con testo scuro.
 `surface="auto"`: renderizza entrambe le immagini e ne mostra una via CSS
 (`dark:hidden` / `hidden dark:block`). Gli usi con fondo fisso (fasce nere della
 landing) restano `surface="dark"`. Navbar e intestazioni su fondo tema usano
-`auto`.
+`auto`. Il valore predefinito di `surface` passa da `"light"` a `"auto"`:
+landing, login, pagine legali e area autenticata usavano tutte il predefinito.
 
 ### 4. Pulsante
 
 - `components/ui/theme-toggle.tsx` (nuovo, Server Component): form POST con
   campo nascosto `mode` = tema successivo, calcolato dal server dal cookie.
-- Server action `cycleTheme` in `lib/preferences/actions.ts`: valida `mode`,
+- Server action `setTheme` in `lib/preferences/actions.ts` (il campo `mode` porta
+  già il modo successivo, calcolato dal server): valida `mode`,
   scrive il cookie (`sameSite: "lax"`, `path: "/"`) o lo cancella per "sistema",
   poi `revalidatePath("/", "layout")`. Niente `redirect`: come
   `acknowledgeCookieNotice`, non serve sapere dove ci si trova. Un valore non
@@ -102,13 +109,17 @@ landing) restano `surface="dark"`. Navbar e intestazioni su fondo tema usano
   della barra dei filtri.
 - Posizione: gruppo strumenti dell'header in `app/[locale]/(app)/layout.tsx`
   (accanto a lingua e logout) e intestazione di `app/[locale]/page.tsx`.
-- Stringhe `it`/`en`: `themeLabel`, `themeLight`, `themeDark`, `themeSystem`.
+- Stringhe `it`/`en` in `common`: `themeToLight`, `themeToDark`,
+  `themeToSystem` (nominano l'azione, non il tema attuale).
 
 ## Rischi
 
-- **Larghezza a 360px.** La riga in alto (logo, lingua, tema, logout) è circa
-  330px su 328 disponibili. Da verificare; se non entra si stringono i riquadri
-  o si riduce il gap, senza togliere controlli.
+- **Larghezza a 360px.** La riga in alto (logo, lingua, tema, logout) era circa
+  330px su 328 disponibili. Mitigato con logo `text-xl` sotto `md` e riquadri
+  lingua da 32px. Misurato con DevTools: l'intestazione dell'area autenticata sta
+  su una riga a 360px e va a capo senza sfondare a 320px. Sulla landing, dove ci
+  sono anche "Accedi" e nessun `flex-wrap`, il wordmark veniva compresso e "IT"
+  lo sovrapponeva: risolto con `shrink-0`, gap più stretto e `flex-wrap`.
 - **Contrasto del rosso su nero: circa 4,1:1**, sotto 4,5 per il testo piccolo.
   Il rosso in tema scuro compare nel testo di `hover:text-primary`, nel codice
   lingua attivo e nei pulsanti di eliminazione. È il colore del brand: non si
@@ -119,7 +130,11 @@ landing) restano `surface="dark"`. Navbar e intestazioni su fondo tema usano
 
 ## Verifica
 
-Il repo non ha test automatici. `npm run typecheck`, `npm run lint`,
+Struttura di test: il repo non ne aveva. Si aggiunge `npm test` (`node --test`)
+solo per `lib/theme.ts`, funzioni pure senza import; per questo `tsconfig.json`
+ha `allowImportingTsExtensions`.
+
+Per il resto `npm run typecheck`, `npm run lint`,
 `npm run build`; poi controllo manuale nei tre modi (sistema, chiaro, scuro) di
 landing, dashboard, libreria (elenco e griglia), scheda serie, account e login;
 cookie assente con il sistema in scuro; ricarica senza flash; funzionamento con
