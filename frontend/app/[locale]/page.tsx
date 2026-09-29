@@ -1,9 +1,12 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { LegalLinks } from "@/components/ui/legal-links";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import { Logo } from "@/components/ui/logo";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale, localizePath } from "@/lib/i18n/config";
+import { THEME_COOKIE, resolveTheme } from "@/lib/theme";
 import { READING_STATUSES } from "@/lib/types";
 
 // Landing pubblica di presentazione. Contenuti da PROJECT.md, impaginazione
@@ -30,6 +33,7 @@ export default async function HomePage({
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
   const t = dict.landing;
+  const theme = resolveTheme((await cookies()).get(THEME_COOKIE)?.value);
 
   const loginHref = localizePath(locale, "/login");
   const languageNames = Object.fromEntries(
@@ -40,16 +44,24 @@ export default async function HomePage({
     <>
       {/* Clear space minimo: le guideline ammettono il wordmark a filo bordo. */}
       <header className="border-b-2 border-secondary">
-        <div className="mx-auto flex max-w-6xl items-baseline justify-between gap-step-2 px-step-2 py-step-2 md:px-step-3">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-step-2 gap-y-step-1 px-step-2 py-step-2 md:px-step-3">
           {/* Il segno affianca il wordmark invece di sostituirlo: e' la prima
               pagina che un ospite vede, e il nome scritto per esteso conta piu'
               del simbolo. */}
-          <span className="flex items-center gap-step-1 font-heading text-2xl uppercase">
+          {/* `shrink-0`: senza, quando la riga non basta e' il logo a
+              comprimersi, e il wordmark esce dal suo riquadro finendo sotto i
+              controlli accanto. Il corpo cala su telefono per lo stesso
+              motivo: con quattro controlli a destra, a 360px non c'e' posto
+              per il `text-2xl`. */}
+          <span className="flex shrink-0 items-center gap-step-1 font-heading text-xl uppercase md:text-2xl">
             <Logo size={32} />
             Loresync
           </span>
-          <div className="flex items-baseline gap-step-3">
+          {/* `items-center` e non `items-baseline`: il pulsante del tema e' un
+              riquadro con un'icona, che una linea di base non allinea. */}
+          <div className="ml-auto flex items-center gap-step-1 md:gap-step-3">
             <LocaleSwitcher current={locale} labels={languageNames} />
+            <ThemeToggle current={theme} labels={dict.common} />
             <Link
               href={loginHref}
               className="border-b-2 border-secondary text-sm font-bold uppercase tracking-wide hover:border-primary hover:text-primary"

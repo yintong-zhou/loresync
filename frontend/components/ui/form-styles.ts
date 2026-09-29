@@ -71,6 +71,12 @@ export const BUTTON_FILTER_CLASS = `${HEIGHT_FILTER} ${BOX} ${LABELLED} border-p
 
 export const BUTTON_GHOST_FILTER_CLASS = `${HEIGHT_FILTER} ${BOX} ${LABELLED} border-secondary px-step-2 text-base hover:border-primary hover:text-primary md:text-sm`;
 
+/**
+ * Solo icona, stessa altezza dei controlli della barra dei filtri: 48px sotto
+ * `md`, 32px da `md`. Quadrato in entrambi i casi (`w-12`, `md:w-8`).
+ */
+export const BUTTON_ICON_GHOST_FILTER_CLASS = `${HEIGHT_FILTER} w-12 md:w-8 ${BOX} ${LABELLED} border-secondary hover:border-primary hover:text-primary`;
+
 /** La textarea cresce in altezza: unico controllo senza altezza fissa. */
 export const TEXTAREA_CLASS = `w-full ${BOX} border-secondary bg-neutral-light px-step-2 py-step-1 text-base`;
 

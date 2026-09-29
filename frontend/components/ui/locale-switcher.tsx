@@ -9,10 +9,12 @@ import {
   type Locale,
 } from "@/lib/i18n/config";
 
-// Su telefono ogni codice e' un riquadro da 48px: due lettere a corpo `sm`
-// sono un bersaglio troppo piccolo per il pollice. Da `md` torna il testo nudo.
+// Su telefono ogni codice e' un riquadro alto 48px e largo 32: due lettere a
+// corpo `sm` sono un bersaglio troppo piccolo per il pollice, e la larghezza e'
+// quella che lascia posto al pulsante del tema nella riga in alto. Da `md`
+// torna il testo nudo.
 const TARGET =
-  "inline-flex h-12 min-w-10 items-center justify-center text-sm uppercase tracking-wide md:h-auto md:min-w-0";
+  "inline-flex h-12 min-w-8 items-center justify-center text-sm uppercase tracking-wide md:h-auto md:min-w-0";
 
 /**
  * Selettore di lingua.

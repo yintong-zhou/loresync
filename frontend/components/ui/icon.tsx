@@ -155,6 +155,29 @@ const ICONS = {
       <path d="M2 2l12 12" />
     </>
   ),
+
+  /** Tema chiaro: un sole squadrato, con i quattro raggi ai lati. */
+  sun: (
+    <>
+      <rect x="5" y="5" width="6" height="6" />
+      <path d="M8 1v2" />
+      <path d="M8 13v2" />
+      <path d="M1 8h2" />
+      <path d="M13 8h2" />
+    </>
+  ),
+
+  /** Tema scuro: una falce di luna. */
+  moon: <path d="M14 8.5A6 6 0 1 1 7.5 2 4.7 4.7 0 0 0 14 8.5z" />,
+
+  /** Tema del dispositivo: uno schermo su un piede. */
+  monitor: (
+    <>
+      <rect x="1" y="2" width="14" height="9" />
+      <path d="M8 11v3" />
+      <path d="M5 14h6" />
+    </>
+  ),
 } satisfies Record<string, ReactNode>;
 
 export type IconName = keyof typeof ICONS;
