@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Anton, Barlow } from "next/font/google";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
@@ -7,6 +7,7 @@ import { CookieNotice } from "@/components/ui/cookie-notice";
 import { NOTICE_COOKIE, hasSeenNotice } from "@/lib/cookie-notice";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/i18n/config";
+import { THEME_COOKIE, resolveTheme } from "@/lib/theme";
 import "../globals.css";
 
 // I due typeface previsti da brand-guidelines.md. Anton esiste solo in 400;
@@ -49,6 +50,11 @@ export const generateMetadata = async ({
   };
 };
 
+// Dichiara che la pagina sa disegnarsi in entrambi i temi: il browser puo'
+// cosi' colorare da subito le parti sue (barre, controlli) prima ancora che il
+// CSS arrivi. Il tema vero lo decide `data-theme` piu' sotto.
+export const viewport: Viewport = { colorScheme: "light dark" };
+
 export default async function LocaleLayout({
   children,
   params,
@@ -67,12 +73,21 @@ export default async function LocaleLayout({
   // La fascia sui cookie si decide qui e non nel browser: senza JavaScript
   // deve funzionare comunque, e un componente client la mostrerebbe per un
   // istante anche a chi l'ha gia' chiusa.
-  const seenNotice = hasSeenNotice(
-    (await cookies()).get(NOTICE_COOKIE)?.value,
-  );
+  const cookieStore = await cookies();
+  const seenNotice = hasSeenNotice(cookieStore.get(NOTICE_COOKIE)?.value);
+
+  // Il tema si decide qui e non nel browser, per lo stesso motivo della fascia
+  // cookie: uno script che lo applica dopo il caricamento mostrerebbe per un
+  // istante il tema sbagliato. Per "sistema" non si scrive niente: decide il
+  // CSS, con `prefers-color-scheme`.
+  const theme = resolveTheme(cookieStore.get(THEME_COOKIE)?.value);
 
   return (
-    <html lang={locale} className={`${anton.variable} ${barlow.variable}`}>
+    <html
+      lang={locale}
+      data-theme={theme === "system" ? undefined : theme}
+      className={`${anton.variable} ${barlow.variable}`}
+    >
       <body className="bg-neutral-light font-sans text-secondary antialiased">
         {children}
         {seenNotice ? null : (

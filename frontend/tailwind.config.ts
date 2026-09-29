@@ -1,10 +1,21 @@
 import type { Config } from "tailwindcss";
 
-// Valori da brand-guidelines.md (mood Bold).
+// Valori da brand-guidelines.md (mood Bold). I colori vivono in
+// `app/globals.css` come variabili, perche' cambiano col tema.
 const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
+  ],
+  // La variante `dark:` segue le stesse regole delle variabili: scelta
+  // esplicita (`data-theme`) prima, dispositivo solo se non c'e' scelta.
+  // Serve dove il tema cambia cio' che si mostra e non un colore — il logo.
+  darkMode: [
+    "variant",
+    [
+      "@media (prefers-color-scheme: dark) { &:not([data-theme=light] *) }",
+      "&:is([data-theme=dark] *)",
+    ],
   ],
   theme: {
     // Raggio 0px: sovrascritto, non esteso, cosi' nessuna utility `rounded-*`
@@ -22,11 +33,14 @@ const config: Config = {
     },
     extend: {
       colors: {
-        primary: "#E10600",
-        secondary: "#050505",
-        accent: "#FFC400",
-        "neutral-dark": "#0A0A0A",
-        "neutral-light": "#F5F5F5",
+        primary: "rgb(var(--color-primary) / <alpha-value>)",
+        secondary: "rgb(var(--color-secondary) / <alpha-value>)",
+        accent: "rgb(var(--color-accent) / <alpha-value>)",
+        "neutral-dark": "rgb(var(--color-neutral-dark) / <alpha-value>)",
+        "neutral-light": "rgb(var(--color-neutral-light) / <alpha-value>)",
+        // Fissi: non si scambiano nel tema scuro.
+        ink: "rgb(var(--color-ink) / <alpha-value>)",
+        paper: "rgb(var(--color-paper) / <alpha-value>)",
       },
       fontFamily: {
         heading: ["var(--font-heading)", "Impact", "sans-serif"],

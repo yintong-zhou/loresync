@@ -1,8 +1,10 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
 import { LegalLinks } from "@/components/ui/legal-links";
 import { LocaleSwitcher } from "@/components/ui/locale-switcher";
 import { Logo } from "@/components/ui/logo";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { signOut } from "@/lib/auth/actions";
 import { getDictionary } from "@/lib/i18n";
 import {
@@ -11,6 +13,7 @@ import {
   isLocale,
   localizePath,
 } from "@/lib/i18n/config";
+import { THEME_COOKIE, resolveTheme } from "@/lib/theme";
 
 // Su telefono le tre voci sono schede a larghezza uguale, con l'icona sopra
 // l'etichetta e un'altezza da pollice (48px); da `md` tornano una riga di testo
@@ -31,6 +34,7 @@ export default async function AppLayout({
   const { locale: raw } = await params;
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
+  const theme = resolveTheme((await cookies()).get(THEME_COOKIE)?.value);
 
   const languageNames = Object.fromEntries(
     LOCALES.map((l) => [l, getDictionary(l).common.languageName]),
@@ -42,14 +46,17 @@ export default async function AppLayout({
           strumenti (lingua, esci), sotto le tre voci di navigazione a tutta
           larghezza. Da `md` e' una riga sola, come prima. L'ordine visivo lo
           decide `order`, non il DOM: cosi' lingua e logout esistono una volta
-          sola e la lettura da tastiera resta logo, voci, strumenti. */}
-      <header className="mb-step-3 flex flex-wrap items-center justify-between gap-x-step-2 gap-y-step-1 border-b-2 border-secondary pb-step-2 md:items-baseline md:justify-start">
+          sola e la lettura da tastiera resta logo, voci, strumenti. Il gap
+          orizzontale e' di 8px sotto `md`: con l'unico link lingua a 48px la
+          riga in alto misura 329px su 328 a 360px, e con 16px andava a capo per
+          un pixel. */}
+      <header className="mb-step-3 flex flex-wrap items-center justify-between gap-x-step-1 gap-y-step-1 border-b-2 border-secondary pb-step-2 md:items-baseline md:justify-start md:gap-x-step-2">
         {/* `items-center` sul link, non `items-baseline` come sul contenitore:
             il segno non ha linea di base, e allineato a quella del testo
             risulterebbe sfalsato verso l'alto. */}
         <Link
           href={localizePath(locale, "/dashboard")}
-          className="order-1 flex items-center gap-step-1 font-heading text-2xl uppercase"
+          className="order-1 flex items-center gap-step-1 font-heading text-xl uppercase md:text-2xl"
         >
           <Logo size={32} />
           Loresync
@@ -75,8 +82,10 @@ export default async function AppLayout({
 
         {/* `items-center` e non `items-baseline`: con un'icona dentro, la
             linea di base allineerebbe il testo lasciando il glifo sfalsato. */}
-        <div className="order-2 flex items-center gap-step-1 md:order-3 md:ml-step-3 md:gap-step-3">
+        <div className="order-2 ml-auto flex items-center gap-step-1 md:order-3 md:ml-step-3 md:gap-step-3">
           <LocaleSwitcher current={locale} labels={languageNames} />
+
+          <ThemeToggle current={theme} labels={dict.common} />
 
           {/* Il logout cambia stato, quindi e' un form POST e non un link: un
               GET puo' essere seguito da un prefetch o da un antivirus.

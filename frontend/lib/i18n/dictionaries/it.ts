@@ -19,6 +19,12 @@ export const it = {
     // che segue gia' il toggle dei contenuti per adulti.
     passwordShow: "Mostra la password",
     passwordHide: "Nascondi la password",
+    // Nominano cosa succede premendo, non il tema attuale: come per la
+    // password e per i contenuti per adulti. Il pulsante cicla, quindi la
+    // frase dipende da dove si va.
+    themeToLight: "Passa al tema chiaro",
+    themeToDark: "Passa al tema scuro",
+    themeToSystem: "Usa il tema del dispositivo",
   },
   landing: {
     hero: {

@@ -8,6 +8,7 @@ import { PREFERENCE_MAX_AGE } from "@/lib/cookies";
 import { NOTICE_ACK, NOTICE_COOKIE } from "@/lib/cookie-notice";
 import { safeNextPath } from "@/lib/auth/helpers";
 import { getLocale } from "@/lib/i18n/server";
+import { THEME_COOKIE, isThemeMode } from "@/lib/theme";
 
 
 /**
@@ -76,5 +77,43 @@ export const acknowledgeCookieNotice = async (): Promise<void> => {
   });
 
   // `layout`: la fascia e' renderizzata dal layout radice, non dalla pagina.
+  revalidatePath("/", "layout");
+};
+
+/**
+ * Imposta il tema dell'interfaccia.
+ *
+ * Form POST e non link, per la ragione scritta in `setAdultMode`: cio' che
+ * cambia uno stato non si chiede con un GET, che un prelievo anticipato
+ * ripete da solo. Qui il pulsante punta sempre al modo **successivo** a quello
+ * attuale, esattamente il caso in cui un prelievo riscriverebbe la scelta
+ * appena fatta.
+ *
+ * Non fa `redirect`, come `acknowledgeCookieNotice`: rivalida il layout e Next
+ * rirenderizza la pagina da cui e' partito il form, senza che questa debba
+ * sapere quale fosse. `data-theme` sta sul layout radice, quindi va rivalidato
+ * quello.
+ *
+ * "Sistema" cancella il cookie invece di scriverne uno: senza cookie decide il
+ * dispositivo. Un valore fuori dai tre ammessi lascia la preferenza com'e',
+ * perche' il campo lo puo' riscrivere chiunque.
+ */
+export const setTheme = async (formData: FormData): Promise<void> => {
+  const mode = formData.get("mode");
+
+  if (typeof mode === "string" && isThemeMode(mode)) {
+    const store = await cookies();
+
+    if (mode === "system") {
+      store.delete(THEME_COOKIE);
+    } else {
+      store.set(THEME_COOKIE, mode, {
+        path: "/",
+        maxAge: PREFERENCE_MAX_AGE,
+        sameSite: "lax",
+      });
+    }
+  }
+
   revalidatePath("/", "layout");
 };

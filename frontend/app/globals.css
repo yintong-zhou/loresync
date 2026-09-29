@@ -4,21 +4,60 @@
 
 /* Token da brand-guidelines.md. Due soli typeface (Anton, Barlow) e due soli
    pesi complessivi (400, 700): l'accoppiata e' il limite fissato dalle
-   guideline. */
+   guideline.
+
+   I colori sono canali RGB ("R G B" separati da spazi) e non esadecimali:
+   Tailwind li legge con `rgb(var(--color-…) / <alpha-value>)`, e cosi' le classi
+   con opacita' continuano a funzionare. I nomi descrivono i valori del tema
+   chiaro: nel tema scuro `secondary` e' chiaro e `neutral-light` e' scuro, cioe'
+   i due neutri si scambiano. Non esistono colori nuovi: il tema scuro usa solo
+   quelli del brand.
+
+   `ink` e `paper` NON si scambiano. Servono dove un colore deve restare quello
+   che e' in qualunque tema: il testo sui pulsanti rossi, le fasce nere della
+   landing, il testo sul riquadro giallo. */
 :root {
   --font-heading: "Anton", Impact, sans-serif;
   --font-body: "Barlow", system-ui, sans-serif;
 
-  --color-primary: #e10600;
-  --color-secondary: #050505;
-  --color-accent: #ffc400;
-  --color-neutral-dark: #0a0a0a;
-  --color-neutral-light: #f5f5f5;
+  --color-primary: 225 6 0;
+  --color-accent: 255 196 0;
+  --color-secondary: 5 5 5;
+  --color-neutral-dark: 10 10 10;
+  --color-neutral-light: 245 245 245;
+
+  --color-ink: 5 5 5;
+  --color-paper: 245 245 245;
+
+  /* Dice al browser con quali colori disegnare i controlli suoi: menu a
+     tendina aperti, barre di scorrimento, campi di ricerca. */
+  color-scheme: light;
+}
+
+/* Senza una scelta salvata decide il dispositivo. `:not([data-theme])`: una
+   scelta esplicita (`data-theme="light"` o `"dark"`, scritta dal layout radice)
+   batte sempre il dispositivo, anche quando dice il contrario. I due blocchi
+   scuri sono identici e vanno tenuti allineati: il CSS non permette di
+   condividere una dichiarazione fra una media query e un selettore. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-secondary: 245 245 245;
+    --color-neutral-dark: 245 245 245;
+    --color-neutral-light: 5 5 5;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-secondary: 245 245 245;
+  --color-neutral-dark: 245 245 245;
+  --color-neutral-light: 5 5 5;
+  color-scheme: dark;
 }
 
 body {
-  background-color: var(--color-neutral-light);
-  color: var(--color-secondary);
+  background-color: rgb(var(--color-neutral-light));
+  color: rgb(var(--color-secondary));
   font-weight: 400;
 }
 
@@ -35,6 +74,6 @@ h4 {
 
 /* Un solo stile di focus, visibile su fondo chiaro e su fondo nero. */
 :focus-visible {
-  outline: 3px solid var(--color-primary);
+  outline: 3px solid rgb(var(--color-primary));
   outline-offset: 3px;
 }

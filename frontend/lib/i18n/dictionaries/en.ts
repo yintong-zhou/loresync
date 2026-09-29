@@ -16,6 +16,9 @@ export const en: Dictionary = {
     languageName: "English",
     passwordShow: "Show password",
     passwordHide: "Hide password",
+    themeToLight: "Switch to light theme",
+    themeToDark: "Switch to dark theme",
+    themeToSystem: "Use device theme",
   },
   landing: {
     hero: {

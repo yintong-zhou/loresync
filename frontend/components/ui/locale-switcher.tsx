@@ -9,10 +9,15 @@ import {
   type Locale,
 } from "@/lib/i18n/config";
 
-// Su telefono ogni codice e' un riquadro da 48px: due lettere a corpo `sm`
-// sono un bersaglio troppo piccolo per il pollice. Da `md` torna il testo nudo.
+// Su telefono ogni codice e' un riquadro alto 48px: due lettere a corpo `sm`
+// sono un bersaglio troppo piccolo per il pollice. La larghezza minima non e'
+// qui ma su ciascun elemento, perche' non e' la stessa: la lingua in uso e' un
+// `<span>` che non si tocca e sta a 32px, quanto lascia posto al pulsante del
+// tema nella riga in alto; l'altra e' l'unico link della lingua e sta a 48px,
+// perche' a 8px da un pulsante di tema quadrato un tocco strimpellato lo
+// cambierebbe al posto suo. Da `md` torna il testo nudo.
 const TARGET =
-  "inline-flex h-12 min-w-10 items-center justify-center text-sm uppercase tracking-wide md:h-auto md:min-w-0";
+  "inline-flex h-12 items-center justify-center text-sm uppercase tracking-wide md:h-auto md:min-w-0";
 
 /**
  * Selettore di lingua.
@@ -39,7 +44,7 @@ export const LocaleSwitcher = ({
           <span
             key={locale}
             aria-current="true"
-            className={`${TARGET} font-bold text-primary`}
+            className={`${TARGET} min-w-8 font-bold text-primary`}
           >
             {locale}
           </span>
@@ -51,7 +56,7 @@ export const LocaleSwitcher = ({
             // Il nome pieno resta accessibile a chi usa uno screen reader,
             // mentre a schermo bastano due lettere.
             aria-label={labels[locale]}
-            className={`${TARGET} text-neutral-dark hover:text-primary`}
+            className={`${TARGET} min-w-12 text-neutral-dark hover:text-primary`}
           >
             {locale}
           </Link>
