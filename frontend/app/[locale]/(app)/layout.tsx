@@ -46,8 +46,11 @@ export default async function AppLayout({
           strumenti (lingua, esci), sotto le tre voci di navigazione a tutta
           larghezza. Da `md` e' una riga sola, come prima. L'ordine visivo lo
           decide `order`, non il DOM: cosi' lingua e logout esistono una volta
-          sola e la lettura da tastiera resta logo, voci, strumenti. */}
-      <header className="mb-step-3 flex flex-wrap items-center justify-between gap-x-step-2 gap-y-step-1 border-b-2 border-secondary pb-step-2 md:items-baseline md:justify-start">
+          sola e la lettura da tastiera resta logo, voci, strumenti. Il gap
+          orizzontale e' di 8px sotto `md`: con l'unico link lingua a 48px la
+          riga in alto misura 329px su 328 a 360px, e con 16px andava a capo per
+          un pixel. */}
+      <header className="mb-step-3 flex flex-wrap items-center justify-between gap-x-step-1 gap-y-step-1 border-b-2 border-secondary pb-step-2 md:items-baseline md:justify-start md:gap-x-step-2">
         {/* `items-center` sul link, non `items-baseline` come sul contenitore:
             il segno non ha linea di base, e allineato a quella del testo
             risulterebbe sfalsato verso l'alto. */}
