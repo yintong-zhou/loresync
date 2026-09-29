@@ -14,7 +14,7 @@ export const FormMessage = ({ state }: { state: FormState }) => {
       className={`border-2 px-step-2 py-step-1 ${
         state.status === "error"
           ? "border-primary text-primary"
-          : "border-secondary bg-accent"
+          : "border-secondary bg-accent text-ink"
       }`}
     >
       {state.message}

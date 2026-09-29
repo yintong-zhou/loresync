@@ -19,7 +19,7 @@ const STEP_PLACES = [
 ];
 
 const CTA_CLASS =
-  "inline-block bg-primary px-step-3 py-step-2 font-bold uppercase tracking-wide text-neutral-light hover:bg-secondary";
+  "inline-block bg-primary px-step-3 py-step-2 font-bold uppercase tracking-wide text-paper hover:bg-secondary hover:text-neutral-light";
 
 export default async function HomePage({
   params,
@@ -119,9 +119,9 @@ export default async function HomePage({
             elemento grafico dominante. */}
         <div
           aria-hidden
-          className="overflow-hidden border-b-2 border-secondary bg-secondary"
+          className="overflow-hidden border-b-2 border-secondary bg-ink"
         >
-          <span className="-ml-[3vw] block whitespace-nowrap font-heading text-[clamp(5rem,26vw,20rem)] uppercase leading-[0.8] text-neutral-light">
+          <span className="-ml-[3vw] block whitespace-nowrap font-heading text-[clamp(5rem,26vw,20rem)] uppercase leading-[0.8] text-paper">
             Loresync Loresync
           </span>
         </div>
@@ -158,7 +158,7 @@ export default async function HomePage({
                   // ciclo di vita e comincia da "da leggere", ma cio' che
                   // l'applicazione fa davvero e' seguire cosa stai leggendo.
                   className={`border-2 border-secondary px-step-2 py-step-1 font-bold uppercase tracking-wide ${
-                    status === "in_corso" ? "bg-accent" : ""
+                    status === "in_corso" ? "bg-accent text-ink" : ""
                   }`}
                 >
                   {dict.readingStatus[status]}
@@ -170,7 +170,7 @@ export default async function HomePage({
 
         {/* Fondo nero a tutta larghezza: i limiti di PROJECT.md dichiarati
             senza giri di parole, come da tono di voce. */}
-        <section className="bg-secondary text-neutral-light">
+        <section className="bg-ink text-paper">
           <div className="mx-auto grid max-w-6xl grid-cols-12 gap-step-3 px-step-2 py-step-4 md:px-step-3 md:py-step-5">
             <h2 className="col-span-12 text-4xl uppercase md:col-span-5 md:text-6xl">
               {t.limits.line1}
@@ -182,7 +182,7 @@ export default async function HomePage({
                 {t.limits.items.map((limit) => (
                   <li
                     key={limit}
-                    className="border-t-2 border-neutral-light py-step-2 text-lg md:text-xl"
+                    className="border-t-2 border-paper py-step-2 text-lg md:text-xl"
                   >
                     {limit}
                   </li>

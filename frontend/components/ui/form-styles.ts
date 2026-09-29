@@ -67,7 +67,7 @@ export const FIELD_FILTER_CLASS = `${HEIGHT_FILTER} ${BOX} border-secondary bg-n
 
 export const SELECT_FILTER_CLASS = `${FIELD_FILTER_CLASS} uppercase tracking-wide`;
 
-export const BUTTON_FILTER_CLASS = `${HEIGHT_FILTER} ${BOX} ${LABELLED} border-primary bg-primary px-step-2 text-base text-neutral-light hover:border-secondary hover:bg-secondary md:text-sm`;
+export const BUTTON_FILTER_CLASS = `${HEIGHT_FILTER} ${BOX} ${LABELLED} border-primary bg-primary px-step-2 text-base text-paper hover:border-secondary hover:bg-secondary hover:text-neutral-light md:text-sm`;
 
 export const BUTTON_GHOST_FILTER_CLASS = `${HEIGHT_FILTER} ${BOX} ${LABELLED} border-secondary px-step-2 text-base hover:border-primary hover:text-primary md:text-sm`;
 
@@ -76,9 +76,9 @@ export const TEXTAREA_CLASS = `w-full ${BOX} border-secondary bg-neutral-light p
 
 /** Azione principale. Il bordo e' dello stesso colore dello sfondo: serve
  *  solo a pareggiare l'altezza dei campi accanto. */
-export const BUTTON_CLASS = `${HEIGHT_MD} ${BOX} ${LABELLED} border-primary bg-primary px-step-3 text-neutral-light hover:border-secondary hover:bg-secondary disabled:opacity-60`;
+export const BUTTON_CLASS = `${HEIGHT_MD} ${BOX} ${LABELLED} border-primary bg-primary px-step-3 text-paper hover:border-secondary hover:bg-secondary hover:text-neutral-light disabled:opacity-60`;
 
-export const BUTTON_SM_CLASS = `${HEIGHT_SM} ${BOX} ${LABELLED} border-primary bg-primary px-step-2 text-sm text-neutral-light hover:border-secondary hover:bg-secondary disabled:opacity-60`;
+export const BUTTON_SM_CLASS = `${HEIGHT_SM} ${BOX} ${LABELLED} border-primary bg-primary px-step-2 text-sm text-paper hover:border-secondary hover:bg-secondary hover:text-neutral-light disabled:opacity-60`;
 
 /**
  * Pulsanti di sola icona: quadrati, senza l'imbottitura laterale che serve al
@@ -86,7 +86,7 @@ export const BUTTON_SM_CLASS = `${HEIGHT_SM} ${BOX} ${LABELLED} border-primary b
  * perche' fra due classi Tailwind della stessa proprieta' vince quella scritta
  * dopo nel foglio di stile, non quella scritta dopo nell'attributo.
  */
-export const BUTTON_ICON_SM_CLASS = `${HEIGHT_SM} w-8 ${BOX} ${LABELLED} border-primary bg-primary text-neutral-light hover:border-secondary hover:bg-secondary`;
+export const BUTTON_ICON_SM_CLASS = `${HEIGHT_SM} w-8 ${BOX} ${LABELLED} border-primary bg-primary text-paper hover:border-secondary hover:bg-secondary hover:text-neutral-light`;
 
 /** Icona sola, altezza dei campi: sta in fila con un `FIELD_CLASS`. */
 export const BUTTON_ICON_GHOST_CLASS = `${HEIGHT_MD} w-10 ${BOX} ${LABELLED} border-secondary hover:border-primary hover:text-primary`;
@@ -99,9 +99,9 @@ export const BUTTON_GHOST_CLASS = `${HEIGHT_MD} ${BOX} ${LABELLED} border-second
 export const BUTTON_GHOST_SM_CLASS = `${HEIGHT_SM} ${BOX} ${LABELLED} border-secondary px-step-2 text-sm hover:border-primary hover:text-primary`;
 
 /** Azione distruttiva: si riempie di rosso solo al passaggio del mouse. */
-export const BUTTON_DANGER_CLASS = `${HEIGHT_MD} ${BOX} ${LABELLED} border-primary px-step-3 text-primary hover:bg-primary hover:text-neutral-light disabled:opacity-60`;
+export const BUTTON_DANGER_CLASS = `${HEIGHT_MD} ${BOX} ${LABELLED} border-primary px-step-3 text-primary hover:bg-primary hover:text-paper disabled:opacity-60`;
 
-export const BUTTON_DANGER_SM_CLASS = `${HEIGHT_SM} ${BOX} ${LABELLED} border-primary px-step-2 text-sm text-primary hover:bg-primary hover:text-neutral-light`;
+export const BUTTON_DANGER_SM_CLASS = `${HEIGHT_SM} ${BOX} ${LABELLED} border-primary px-step-2 text-sm text-primary hover:bg-primary hover:text-paper`;
 
 /** Elemento non interattivo che deve stare in fila con i controlli. */
 export const CHIP_SM_CLASS = `${HEIGHT_SM} ${BOX} inline-flex items-center border-neutral-light px-step-2 text-sm uppercase tracking-wide text-neutral-dark`;
