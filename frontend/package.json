@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --test lib/theme.test.ts"
+    "test": "node --test lib/theme.test.ts lib/url.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

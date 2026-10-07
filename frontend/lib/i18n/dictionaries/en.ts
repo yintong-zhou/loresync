@@ -333,9 +333,22 @@ export const en: Dictionary = {
     openSeries: "Open series",
     noValidLink: "Invalid link",
     staleLink: "The saved link points to another chapter: paste it again.",
+    domainSection: "Sites",
+    domainHint:
+      "The sites your series live on. When one changes address (from .it to " +
+      ".com, for example) fix the domain and move all its series in one go. " +
+      "The rest of the link stays the same.",
+    domainEmpty: "No series in your library.",
+    domainRow: "{host} · {count} series",
+    domainSubmit: "Move series",
+    domainPending: "Moving...",
+    domainMoved: "Series moved: {count}.",
+    domainNotFound: "No series on {host}.",
     errors: {
       invalidInput: "Check the details you entered.",
       duplicate: "This series is already in your library.",
+      domainDuplicate:
+        "Some series are already in your library on the new domain: nothing was moved.",
       generic: "Could not save. Try again.",
     },
   },

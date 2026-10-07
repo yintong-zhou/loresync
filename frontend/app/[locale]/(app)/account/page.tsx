@@ -14,7 +14,9 @@ import {
   isLocale,
   localizePath,
 } from "@/lib/i18n/config";
+import { moveDomain } from "@/lib/manga/actions";
 import { createClient } from "@/lib/supabase/server";
+import { countHosts } from "@/lib/url";
 import {
   deleteAccount,
   updateEmail,
@@ -50,6 +52,16 @@ export default async function AccountPage({
     .select("display_name, preferred_locale")
     .eq("id", user.id)
     .maybeSingle();
+
+  // Numeri e domini, niente titoli o copertine: il filtro per adulti non si
+  // applica, come agli altri conteggi.
+  const { data: links } = await supabase
+    .from("manga_entries")
+    .select("series_url, chapter_url, cover_url")
+    .eq("user_id", user.id);
+  const sites = countHosts(
+    (links ?? []).map((l) => [l.series_url, l.chapter_url, l.cover_url]),
+  );
 
   return (
     <main className="flex flex-col">
@@ -162,6 +174,49 @@ export default async function AccountPage({
               hideLabel={dict.common.passwordHide}
             />
           </AccountForm>
+        </div>
+      </section>
+
+      <section className={SECTION_CLASS}>
+        <h2 className="col-span-12 text-2xl uppercase md:col-span-4 md:text-3xl">
+          {dict.manga.domainSection}
+        </h2>
+        <div className="col-span-12 md:col-span-7 md:col-start-6">
+          <p className={`mb-step-2 ${HINT_CLASS}`}>{dict.manga.domainHint}</p>
+          {sites.length === 0 && <p>{dict.manga.domainEmpty}</p>}
+          {/* Una riga per sito, ciascuna col suo form: dopo lo spostamento la
+              riga del dominio vecchio sparisce e compare quella del nuovo, che
+              e' gia' l'esito. Il messaggio resta solo per gli errori. */}
+          <ul className="flex flex-col gap-step-3">
+            {sites.map(({ host, count }) => (
+              <li key={host}>
+                <AccountForm
+                  action={moveDomain}
+                  submitLabel={dict.manga.domainSubmit}
+                  pendingLabel={dict.manga.domainPending}
+                >
+                  <input type="hidden" name="fromHost" value={host} />
+                  <div>
+                    <label className={LABEL_CLASS} htmlFor={`host-${host}`}>
+                      {dict.manga.domainRow
+                        .replace("{host}", host)
+                        .replace("{count}", String(count))}
+                    </label>
+                    <input
+                      id={`host-${host}`}
+                      name="toHost"
+                      type="text"
+                      required
+                      defaultValue={host}
+                      autoCapitalize="none"
+                      spellCheck={false}
+                      className={`mt-step-1 ${FIELD_CLASS}`}
+                    />
+                  </div>
+                </AccountForm>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

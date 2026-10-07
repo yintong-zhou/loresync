@@ -83,3 +83,67 @@ export const chapterFromUrl = (value: string): number | null => {
   const parsed = Number.parseFloat(raw.replace("-", "."));
   return Number.isFinite(parsed) ? parsed : null;
 };
+
+/**
+ * Legge un dominio scritto a mano: `manga.it`, `www.manga.it` o un link
+ * intero incollato dalla barra degli indirizzi. Ritorna `null` se non e' un
+ * dominio.
+ */
+export const hostFromInput = (value: string): string | null => {
+  const raw = value.trim();
+  if (!raw) return null;
+  try {
+    const url = new URL(raw.includes("://") ? raw : `https://${raw}`);
+    return url.hostname.includes(".") ? url.hostname.toLowerCase() : null;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Sposta un link da un dominio a un altro, lasciando intatto il resto:
+ * `https://manga.it/serie/x` diventa `https://manga.com/serie/x`.
+ * Ritorna `null` se il link non sta su `from`: corrispondenza esatta, quindi
+ * `www.manga.it` e `cdn.manga.it` sono domini diversi da `manga.it`.
+ */
+export const swapHost = (
+  value: string,
+  from: string,
+  to: string,
+): string | null => {
+  try {
+    const url = new URL(value);
+    if (url.hostname !== from) return null;
+    url.hostname = to;
+    return url.toString();
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Su quali siti stanno i link di una libreria, e quante serie per sito.
+ * Ogni elemento di `series` sono i link di una serie (serie, capitolo,
+ * copertina): una serie conta una volta sola per sito, anche se piu' link ci
+ * puntano. Dal sito con piu' serie a quello con meno, poi in ordine alfabetico.
+ */
+export const countHosts = (
+  series: (string | null)[][],
+): { host: string; count: number }[] => {
+  const counts = new Map<string, number>();
+  for (const links of series) {
+    const hosts = new Set<string>();
+    for (const link of links) {
+      if (!link) continue;
+      try {
+        hosts.add(new URL(link).hostname);
+      } catch {
+        // Link illeggibile: non sta su nessun sito.
+      }
+    }
+    for (const host of hosts) counts.set(host, (counts.get(host) ?? 0) + 1);
+  }
+  return [...counts]
+    .map(([host, count]) => ({ host, count }))
+    .sort((a, b) => b.count - a.count || a.host.localeCompare(b.host));
+};

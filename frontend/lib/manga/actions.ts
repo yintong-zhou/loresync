@@ -7,7 +7,7 @@ import { getDictionary } from "@/lib/i18n";
 import { localizePath } from "@/lib/i18n/config";
 import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
-import { normalizeUrl } from "@/lib/url";
+import { hostFromInput, normalizeUrl, swapHost } from "@/lib/url";
 import {
   chapterForStatus,
   mangaEditSchema,
@@ -233,4 +233,80 @@ export const deleteEntry = async (formData: FormData): Promise<void> => {
   if (error) throw new Error(error.message);
 
   revalidatePath(localizePath(locale, "/library"));
+};
+
+/**
+ * Sposta in blocco le serie da un dominio a un altro, quando un sito di
+ * lettura cambia estensione (`.it` -> `.com`) e i link salvati smettono di
+ * funzionare. Tocca serie, capitolo e copertina: quello che stava sul dominio
+ * vecchio e' morto con lui.
+ *
+ * Tutto in un solo `upsert` per `id`, cioe' una sola istruzione: se anche una
+ * sola serie va a scontrarsi con una gia' presente sul dominio nuovo, il
+ * vincolo di unicita' blocca l'intero spostamento invece di lasciarne meta'
+ * fatto. Nell'upsert vanno anche `user_id` e `title` perche' sono obbligatori
+ * nel ramo di inserimento, che qui non scatta mai: gli `id` esistono gia'.
+ */
+export const moveDomain = async (
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> => {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+
+  const from = hostFromInput(String(formData.get("fromHost") ?? ""));
+  const to = hostFromInput(String(formData.get("toHost") ?? ""));
+  if (!from || !to || from === to) {
+    return formError(dict.manga.errors.invalidInput);
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return formError(dict.account.errors.notSignedIn);
+
+  // ponytail: legge l'intera libreria e filtra qui; un filtro `ilike` lato
+  // database se le librerie arrivano a migliaia di serie.
+  const { data, error: readError } = await supabase
+    .from("manga_entries")
+    .select("id, user_id, title, series_url, chapter_url, cover_url")
+    .eq("user_id", user.id);
+  if (readError) return formError(dict.manga.errors.generic);
+
+  const rows = (data ?? []).flatMap((entry) => {
+    const series = swapHost(entry.series_url, from, to);
+    const chapter = entry.chapter_url && swapHost(entry.chapter_url, from, to);
+    const cover = entry.cover_url && swapHost(entry.cover_url, from, to);
+    if (!series && !chapter && !cover) return [];
+    return [
+      {
+        ...entry,
+        series_url: series ?? entry.series_url,
+        chapter_url: chapter || entry.chapter_url,
+        cover_url: cover || entry.cover_url,
+      },
+    ];
+  });
+
+  if (rows.length === 0) {
+    return formError(dict.manga.domainNotFound.replace("{host}", from));
+  }
+
+  const { error } = await supabase
+    .from("manga_entries")
+    .upsert(rows, { onConflict: "id" });
+
+  if (error) {
+    if (error.code === UNIQUE_VIOLATION) {
+      return formError(dict.manga.errors.domainDuplicate);
+    }
+    return formError(dict.manga.errors.generic);
+  }
+
+  revalidatePath(localizePath(locale, "/library"));
+  revalidatePath(localizePath(locale, "/account"));
+  return formSuccess(
+    dict.manga.domainMoved.replace("{count}", String(rows.length)),
+  );
 };

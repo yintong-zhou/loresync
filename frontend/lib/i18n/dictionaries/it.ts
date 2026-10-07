@@ -350,9 +350,24 @@ export const it = {
     openSeries: "Apri la serie",
     noValidLink: "Link non valido",
     staleLink: "Il link salvato punta a un altro capitolo: reincollalo.",
+    domainSection: "Siti",
+    domainHint:
+      "I siti su cui stanno le tue serie. Quando uno cambia indirizzo (da .it " +
+      "a .com, per esempio) correggi il dominio e sposti tutte le sue serie in " +
+      "un colpo solo. Il resto del link non cambia.",
+    domainEmpty: "Nessuna serie in libreria.",
+    // `{host}` e `{count}` vengono sostituiti nella pagina.
+    domainRow: "{host} · {count} serie",
+    domainSubmit: "Sposta le serie",
+    domainPending: "Spostamento...",
+    // `{count}` e `{host}` vengono sostituiti nella action.
+    domainMoved: "Serie spostate: {count}.",
+    domainNotFound: "Nessuna serie su {host}.",
     errors: {
       invalidInput: "Controlla i dati inseriti.",
       duplicate: "Questa serie è già in libreria.",
+      domainDuplicate:
+        "Alcune serie sono già in libreria con il dominio nuovo: niente è stato spostato.",
       generic: "Non è stato possibile salvare. Riprova.",
     },
   },
