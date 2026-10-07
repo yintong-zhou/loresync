@@ -50,10 +50,11 @@ export default async function AppLayout({
           orizzontale e' di 8px sotto `md`: con l'unico link lingua a 48px la
           riga in alto misura 329px su 328 a 360px, e con 16px andava a capo per
           un pixel. */}
-      <header className="mb-step-3 flex flex-wrap items-center justify-between gap-x-step-1 gap-y-step-1 border-b-2 border-secondary pb-step-2 md:items-baseline md:justify-start md:gap-x-step-2">
-        {/* `items-center` sul link, non `items-baseline` come sul contenitore:
-            il segno non ha linea di base, e allineato a quella del testo
-            risulterebbe sfalsato verso l'alto. */}
+      <header className="mb-step-3 flex flex-wrap items-center justify-between gap-x-step-1 gap-y-step-1 border-b-2 border-secondary pb-step-2 md:justify-start md:gap-x-step-2">
+        {/* Il contenitore allinea al centro, non alla linea di base: logo,
+            voci e strumenti hanno altezze diverse (segno da 32px, testo,
+            pulsante del tema da 32px), e alla linea di base ciascuno finiva
+            un po' piu' su o piu' giu' dell'altro. */}
         <Link
           href={localizePath(locale, "/dashboard")}
           className="order-1 flex items-center gap-step-1 font-heading text-xl uppercase md:text-2xl"
